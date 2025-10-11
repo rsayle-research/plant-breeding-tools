@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experiment File Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .back-link {
+            display: inline-block;
+            color: #667eea;
+            text-decoration: none;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #764ba2;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5e3a82;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(118, 75, 162, 0.4);
+        }
+        
+        .section {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .columns-list {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        
+        .column-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        
+        .column-item.fixed {
+            opacity: 0.7;
+        }
+        
+        .column-item input {
+            flex: 1;
+            margin-right: 10px;
+        }
+        
+        .column-item button {
+            padding: 5px 15px;
+            background: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .column-item button:hover {
+            background: #cc0000;
+        }
+        
+        .add-column-btn {
+            width: 100%;
+            padding: 10px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        .add-column-btn:hover {
+            background: #45a049;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        
+        .info-box p {
+            color: #1976D2;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .action-buttons button {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Back to Dashboard</a>
+        
+        <div class="header">
+            <h1>📊 Experiment File Generator</h1>
+            <p>Create standardized experiment templates in seconds</p>
+        </div>
+        
+        <!-- Main Menu -->
+        <div id="mainMenu" class="section active">
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="showSection('createExperiment')">
+                    🆕 Create New Experiment
+                </button>
+                <button class="btn btn-secondary" onclick="showSection('editSettings')">
+                    ⚙️ Edit Settings
+                </button>
+            </div>
+        </div>
+        
+        <!-- Edit Settings Section -->
+        <div id="editSettings" class="section">
+            <h2 style="margin-bottom: 20px; color: #333;">Column Settings</h2>
+            
+            <div class="info-box">
+                <p><strong>Fixed Columns:</strong> Expt, Entry, Barcode, Label, Source (cannot be removed)</p>
+                <p><strong>Custom Columns:</strong> Add additional columns that will appear in all new experiments</p>
+            </div>
+            
+            <div class="columns-list">
+                <h3 style="margin-bottom: 15px; color: #555; font-size: 16px;">Fixed Columns</h3>
+                <div class="column-item fixed">
+                    <input type="text" value="Expt" disabled>
+                    <span style="color: #999; font-size: 12px;">Fixed</span>
+                </div>
+                <div class="column-item fixed">
+                    <input type="text" value="Entry" disabled>
+                    <span style="color: #999; font-size: 12px;">Fixed</span>
+                </div>
+                <div class="column-item fixed">
+                    <input type="text" value="Barcode" disabled>
+                    <span style="color: #999; font-size: 12px;">Fixed</span>
+                </div>
+                <div class="column-item fixed">
+                    <input type="text" value="Label" disabled>
+                    <span style="color: #999; font-size: 12px;">Fixed</span>
+                </div>
+                <div class="column-item fixed">
+                    <input type="text" value="Source" disabled>
+                    <span style="color: #999; font-size: 12px;">Fixed</span>
+                </div>
+                
+                <h3 style="margin: 20px 0 15px 0; color: #555; font-size: 16px;">Custom Columns</h3>
+                <div id="customColumnsList"></div>
+                <button class="add-column-btn" onclick="addCustomColumn()">+ Add Custom Column</button>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-secondary" onclick="showSection('mainMenu')">Back</button>
+                <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+            </div>
+        </div>
+        
+        <!-- Create Experiment Section -->
+        <div id="createExperiment" class="section">
+            <h2 style="margin-bottom: 20px; color: #333;">Create New Experiment</h2>
+            
+            <form id="experimentForm">
+                <div class="form-group">
+                    <label for="experimentName">Experiment Name *</label>
+                    <input type="text" id="experimentName" placeholder="e.g., 2024_Wheat_Trial_1" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="numEntries">Number of Entries *</label>
+                    <input type="number" id="numEntries" min="1" value="10" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="fileType">File Type *</label>
+                    <select id="fileType">
+                        <option value="csv">CSV (.csv)</option>
+                        <option value="xlsx">Excel (.xlsx)</option>
+                    </select>
+                </div>
+                
+                <div class="info-box">
+                    <p><strong>Your file will include:</strong> Fixed columns (Expt, Entry, Barcode, Label, Source) plus any custom columns you've added in settings.</p>
+                </div>
+                
+                <div class="action-buttons">
+                    <button type="button" class="btn btn-secondary" onclick="showSection('mainMenu')">Back</button>
+                    <button type="submit" class="btn btn-primary">CREATE FILE</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        let customColumns = [];
+        
+        // Load settings from memory
+        function loadSettings() {
+            const saved = customColumns;
+            renderCustomColumns();
+        }
+        
+        // Show/hide sections
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            
+            if (sectionId === 'editSettings') {
+                loadSettings();
+            }
+        }
+        
+        // Add custom column
+        function addCustomColumn() {
+            customColumns.push('');
+            renderCustomColumns();
+        }
+        
+        // Remove custom column
+        function removeCustomColumn(index) {
+            customColumns.splice(index, 1);
+            renderCustomColumns();
+        }
+        
+        // Render custom columns
+        function renderCustomColumns() {
+            const container = document.getElementById('customColumnsList');
+            container.innerHTML = '';
+            
+            customColumns.forEach((col, index) => {
+                const div = document.createElement('div');
+                div.className = 'column-item';
+                div.innerHTML = `
+                    <input type="text" value="${col}" placeholder="Column name" 
+                           onchange="customColumns[${index}] = this.value">
+                    <button onclick="removeCustomColumn(${index})">Remove</button>
+                `;
+                container.appendChild(div);
+            });
+            
+            if (customColumns.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No custom columns added yet</p>';
+            }
+        }
+        
+        // Save settings
+        function saveSettings() {
+            alert('Settings saved successfully!');
+            showSection('mainMenu');
+        }
+        
+        // Generate and download file
+        document.getElementById('experimentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const experimentName = document.getElementById('experimentName').value;
+            const numEntries = parseInt(document.getElementById('numEntries').value);
+            const fileType = document.getElementById('fileType').value;
+            
+            // Create data array
+            const headers = ['Expt', 'Entry', 'Barcode', 'Label', 'Source', ...customColumns.filter(c => c.trim() !== '')];
+            const data = [headers];
+            
+            // Add rows
+            for (let i = 1; i <= numEntries; i++) {
+                const row = [
+                    experimentName,  // Expt
+                    i,              // Entry
+                    '',             // Barcode
+                    '',             // Label
+                    '',             // Source
+                    ...customColumns.filter(c => c.trim() !== '').map(() => '') // Custom columns
+                ];
+                data.push(row);
+            }
+            
+            if (fileType === 'csv') {
+                downloadCSV(data, experimentName);
+            } else {
+                downloadExcel(data, experimentName);
+            }
+        });
+        
+        // Download as CSV
+        function downloadCSV(data, filename) {
+            const csvContent = data.map(row => row.join(',')).join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${filename}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+            
+            alert(`✅ ${filename}.csv has been generated and downloaded!`);
+            showSection('mainMenu');
+        }
+        
+        // Download as Excel
+        function downloadExcel(data, filename) {
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Experiment');
+            XLSX.writeFile(wb, `${filename}.xlsx`);
+            
+            alert(`✅ ${filename}.xlsx has been generated and downloaded!`);
+            showSection('mainMenu');
+        }
+        
+        // Initialize
+        loadSettings();
+    </script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant Breeding Tools Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .tool-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        
+        .tool-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        
+        .tool-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+        
+        .tool-card p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .tool-card .status {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 5px 12px;
+            background: #4CAF50;
+            color: white;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .status.coming-soon {
+            background: #FF9800;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            opacity: 0.8;
+            font-size: 14px;
+        }
+        
+        .add-tool-btn {
+            background: rgba(255,255,255,0.2);
+            border: 2px dashed rgba(255,255,255,0.5);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            min-height: 200px;
+        }
+        
+        .add-tool-btn:hover {
+            background: rgba(255,255,255,0.3);
+            border-color: rgba(255,255,255,0.8);
+        }
+        
+        .add-tool-btn .icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🌱 Plant Breeding Tools Dashboard</h1>
+        <p>Your collection of experiment management tools</p>
+    </div>
+    
+    <div class="container">
+        <div class="tools-grid">
+            <!-- Experiment File Generator -->
+            <div class="tool-card" onclick="window.location.href='experiment-generator.html'">
+                <div class="tool-icon">📊</div>
+                <h3>Experiment File Generator</h3>
+                <p>Quickly create standardized CSV/Excel templates for new experiments with pre-configured columns and automatic numbering.</p>
+                <span class="status">Active</span>
+            </div>
+            
+            <!-- Seed Label Generator -->
+            <div class="tool-card" onclick="window.location.href='seed-labels.html'">
+                <div class="tool-icon">🏷️</div>
+                <h3>Seed Label Generator</h3>
+                <p>Create printable labels for seed packets with variety information, generation data, and collection dates.</p>
+                <span class="status">Active</span>
+            </div>
+            
+            <!-- Coming Soon Placeholders -->
+            <div class="tool-card">
+                <div class="tool-icon">📈</div>
+                <h3>Field Trial Randomizer</h3>
+                <p>Generate randomized field layouts for your breeding trials with blocking and replication support.</p>
+                <span class="status coming-soon">Coming Soon</span>
+            </div>
+            
+            <div class="tool-card">
+                <div class="tool-icon">🧬</div>
+                <h3>Pedigree Tracker</h3>
+                <p>Visualize and manage crossing histories and pedigree relationships for your breeding lines.</p>
+                <span class="status coming-soon">Coming Soon</span>
+            </div>
+            
+            <div class="tool-card">
+                <div class="tool-icon">📋</div>
+                <h3>Phenotype Data Cleaner</h3>
+                <p>Validate and clean phenotype data files with automatic outlier detection and quality checks.</p>
+                <span class="status coming-soon">Coming Soon</span>
+            </div>
+            
+            <!-- Add More Tools -->
+            <div class="tool-card add-tool-btn">
+                <div class="icon">➕</div>
+                <h3>Add New Tool</h3>
+                <p>Build your next utility</p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Built for plant breeders, by plant breeders | Version 1.0</p>
+        </div>
+    </div>
+</body>
+</html>
