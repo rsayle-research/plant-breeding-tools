@@ -157,6 +157,7 @@
         
         .column-item.fixed {
             opacity: 0.7;
+            background: #f9f9f9;
         }
         
         .column-item input {
@@ -206,6 +207,11 @@
             color: #1976D2;
             font-size: 13px;
             line-height: 1.5;
+            margin-bottom: 5px;
+        }
+        
+        .info-box p:last-child {
+            margin-bottom: 0;
         }
         
         .action-buttons {
@@ -216,6 +222,58 @@
         
         .action-buttons button {
             flex: 1;
+        }
+        
+        .settings-group {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .settings-group h3 {
+            color: #555;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .radio-option:hover {
+            background: #f0f0f0;
+        }
+        
+        .radio-option input[type="radio"] {
+            width: auto;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        
+        .radio-option label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: normal;
+            flex: 1;
+        }
+        
+        .example {
+            color: #999;
+            font-size: 12px;
+            margin-left: 5px;
         }
     </style>
 </head>
@@ -245,10 +303,34 @@
             <h2 style="margin-bottom: 20px; color: #333;">Column Settings</h2>
             
             <div class="info-box">
-                <p><strong>Fixed Columns:</strong> Expt, Entry, Barcode, Label, Source (cannot be removed)</p>
-                <p><strong>Custom Columns:</strong> Add additional columns that will appear in all new experiments</p>
+                <p><strong>Fixed Columns:</strong> Expt and Entry (cannot be removed - required for file generation)</p>
+                <p><strong>Custom Columns:</strong> Add or remove any additional columns for your experiments</p>
             </div>
             
+            <!-- Entry Format Settings -->
+            <div class="settings-group">
+                <h3>Entry Number Format</h3>
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" id="format1" name="entryFormat" value="1" onchange="saveEntryFormat()">
+                        <label for="format1">No padding <span class="example">(1, 2, 3, ...)</span></label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="format01" name="entryFormat" value="01" onchange="saveEntryFormat()">
+                        <label for="format01">Two digits <span class="example">(01, 02, 03, ...)</span></label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="format001" name="entryFormat" value="001" checked onchange="saveEntryFormat()">
+                        <label for="format001">Three digits <span class="example">(001, 002, 003, ...)</span></label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="format0001" name="entryFormat" value="0001" onchange="saveEntryFormat()">
+                        <label for="format0001">Four digits <span class="example">(0001, 0002, 0003, ...)</span></label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Column Settings -->
             <div class="columns-list">
                 <h3 style="margin-bottom: 15px; color: #555; font-size: 16px;">Fixed Columns</h3>
                 <div class="column-item fixed">
@@ -257,18 +339,6 @@
                 </div>
                 <div class="column-item fixed">
                     <input type="text" value="Entry" disabled>
-                    <span style="color: #999; font-size: 12px;">Fixed</span>
-                </div>
-                <div class="column-item fixed">
-                    <input type="text" value="Barcode" disabled>
-                    <span style="color: #999; font-size: 12px;">Fixed</span>
-                </div>
-                <div class="column-item fixed">
-                    <input type="text" value="Label" disabled>
-                    <span style="color: #999; font-size: 12px;">Fixed</span>
-                </div>
-                <div class="column-item fixed">
-                    <input type="text" value="Source" disabled>
                     <span style="color: #999; font-size: 12px;">Fixed</span>
                 </div>
                 
@@ -307,7 +377,8 @@
                 </div>
                 
                 <div class="info-box">
-                    <p><strong>Your file will include:</strong> Fixed columns (Expt, Entry, Barcode, Label, Source) plus any custom columns you've added in settings.</p>
+                    <p><strong>Your file will include:</strong> Expt (pre-filled), Entry (numbered), plus any custom columns you've added in settings.</p>
+                    <p id="currentFormatInfo"></p>
                 </div>
                 
                 <div class="action-buttons">
@@ -319,12 +390,44 @@
     </div>
     
     <script>
-        let customColumns = [];
+        let customColumns = ['Barcode', 'Label', 'Source'];
+        let entryFormat = '001';
         
-        // Load settings from memory
+        // Load settings from memory on page load
         function loadSettings() {
-            const saved = customColumns;
             renderCustomColumns();
+            loadEntryFormat();
+        }
+        
+        // Load entry format setting
+        function loadEntryFormat() {
+            const formatRadio = document.querySelector(`input[name="entryFormat"][value="${entryFormat}"]`);
+            if (formatRadio) {
+                formatRadio.checked = true;
+            }
+            updateFormatInfo();
+        }
+        
+        // Save entry format
+        function saveEntryFormat() {
+            const selected = document.querySelector('input[name="entryFormat"]:checked');
+            if (selected) {
+                entryFormat = selected.value;
+                updateFormatInfo();
+            }
+        }
+        
+        // Update format info display
+        function updateFormatInfo() {
+            const infoEl = document.getElementById('currentFormatInfo');
+            if (infoEl) {
+                let example;
+                if (entryFormat === '1') example = '1, 2, 3, ...';
+                else if (entryFormat === '01') example = '01, 02, 03, ...';
+                else if (entryFormat === '001') example = '001, 002, 003, ...';
+                else if (entryFormat === '0001') example = '0001, 0002, 0003, ...';
+                infoEl.innerHTML = `<strong>Entry format:</strong> ${example}`;
+            }
         }
         
         // Show/hide sections
@@ -334,6 +437,8 @@
             
             if (sectionId === 'editSettings') {
                 loadSettings();
+            } else if (sectionId === 'createExperiment') {
+                updateFormatInfo();
             }
         }
         
@@ -376,6 +481,20 @@
             showSection('mainMenu');
         }
         
+        // Format entry number based on selected format
+        function formatEntryNumber(num) {
+            if (entryFormat === '1') {
+                return num.toString();
+            } else if (entryFormat === '01') {
+                return num.toString().padStart(2, '0');
+            } else if (entryFormat === '001') {
+                return num.toString().padStart(3, '0');
+            } else if (entryFormat === '0001') {
+                return num.toString().padStart(4, '0');
+            }
+            return num.toString();
+        }
+        
         // Generate and download file
         document.getElementById('experimentForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -385,17 +504,14 @@
             const fileType = document.getElementById('fileType').value;
             
             // Create data array
-            const headers = ['Expt', 'Entry', 'Barcode', 'Label', 'Source', ...customColumns.filter(c => c.trim() !== '')];
+            const headers = ['Expt', 'Entry', ...customColumns.filter(c => c.trim() !== '')];
             const data = [headers];
             
             // Add rows
             for (let i = 1; i <= numEntries; i++) {
                 const row = [
-                    experimentName,  // Expt
-                    i,              // Entry
-                    '',             // Barcode
-                    '',             // Label
-                    '',             // Source
+                    experimentName,           // Expt
+                    formatEntryNumber(i),     // Entry (formatted)
                     ...customColumns.filter(c => c.trim() !== '').map(() => '') // Custom columns
                 ];
                 data.push(row);
