@@ -11,15 +11,9 @@
             box-sizing: border-box;
         }
         
-        :root {
-            --primary-color: #4CAF50;
-            --text-color: #333;
-            --background-gradient: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-        }
-        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--background-gradient);
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             min-height: 100vh;
             padding: 20px;
         }
@@ -79,7 +73,7 @@
         }
         
         .btn-primary {
-            background: var(--primary-color);
+            background: #4CAF50;
         }
         
         .btn-primary:hover {
@@ -247,7 +241,7 @@
         }
         
         .tool-card h3 {
-            color: var(--text-color);
+            color: #333;
             margin-bottom: 10px;
             font-size: 20px;
         }
@@ -262,7 +256,7 @@
             display: inline-block;
             margin-top: 15px;
             padding: 5px 12px;
-            background: var(--primary-color);
+            background: #4CAF50;
             color: white;
             border-radius: 20px;
             font-size: 12px;
@@ -314,7 +308,7 @@
         }
         
         .modal-header h2 {
-            color: var(--text-color);
+            color: #333;
             font-size: 24px;
         }
         
@@ -350,7 +344,7 @@
         
         .settings-section button:hover {
             background: #f5f5f5;
-            border-color: var(--primary-color);
+            border-color: #4CAF50;
         }
         
         .hidden-tools-list {
@@ -373,17 +367,12 @@
         
         .hidden-tool-item button {
             padding: 4px 12px;
-            background: var(--primary-color);
+            background: #4CAF50;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             font-size: 12px;
-        }
-
-        #qrcode {
-            margin: 0 auto;
-            text-align: center;
         }
     </style>
 </head>
@@ -406,7 +395,6 @@
                 <button class="btn btn-primary" onclick="exportSettings()">💾 Save Dashboard Configuration</button>
                 <button class="btn" onclick="document.getElementById('importFile').click()">📂 Load Dashboard Configuration</button>
                 <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importSettings(event)">
-                <button id="transferToMobileBtn" class="btn" style="margin-left: 10px;">📱 Transfer Dashboard to Mobile</button>
             </div>
         </div>
         
@@ -437,8 +425,8 @@
             <!-- Experiment File Generator -->
             <div class="tool-card" data-id="experiment-generator" data-status="active">
                 <div class="tool-actions">
-                    <button class="tool-action-btn star" aria-label="Toggle favorite for Experiment File Generator" title="Toggle favorite" onclick="toggleFavorite(event, 'experiment-generator')">⭐</button>
-                    <button class="tool-action-btn hide" aria-label="Hide Experiment File Generator" title="Hide tool" onclick="hideTool(event, 'experiment-generator')">👁️</button>
+                    <button class="tool-action-btn star" onclick="toggleFavorite(event, 'experiment-generator')">⭐</button>
+                    <button class="tool-action-btn hide" onclick="hideTool(event, 'experiment-generator')">👁️</button>
                 </div>
                 <div onclick="window.location.href='experiment-file-generator.html'">
                     <div class="tool-icon">📊</div>
@@ -451,8 +439,8 @@
             <!-- Seed Label Generator -->
             <div class="tool-card" data-id="seed-labels" data-status="active">
                 <div class="tool-actions">
-                    <button class="tool-action-btn star" aria-label="Toggle favorite for Seed Label Generator" title="Toggle favorite" onclick="toggleFavorite(event, 'seed-labels')">⭐</button>
-                    <button class="tool-action-btn hide" aria-label="Hide Seed Label Generator" title="Hide tool" onclick="hideTool(event, 'seed-labels')">👁️</button>
+                    <button class="tool-action-btn star" onclick="toggleFavorite(event, 'seed-labels')">⭐</button>
+                    <button class="tool-action-btn hide" onclick="hideTool(event, 'seed-labels')">👁️</button>
                 </div>
                 <div onclick="window.location.href='seed-labels.html'">
                     <div class="tool-icon">🏷️</div>
@@ -465,8 +453,8 @@
             <!-- Coming Soon Placeholders -->
             <div class="tool-card" data-id="field-randomizer" data-status="coming-soon">
                 <div class="tool-actions">
-                    <button class="tool-action-btn star" aria-label="Toggle favorite for Field Trial Randomizer" title="Toggle favorite" onclick="toggleFavorite(event, 'field-randomizer')">⭐</button>
-                    <button class="tool-action-btn hide" aria-label="Hide Field Trial Randomizer" title="Hide tool" onclick="hideTool(event, 'field-randomizer')">👁️</button>
+                    <button class="tool-action-btn star" onclick="toggleFavorite(event, 'field-randomizer')">⭐</button>
+                    <button class="tool-action-btn hide" onclick="hideTool(event, 'field-randomizer')">👁️</button>
                 </div>
                 <div>
                     <div class="tool-icon">📈</div>
@@ -478,8 +466,8 @@
             
             <div class="tool-card" data-id="pedigree-tracker" data-status="coming-soon">
                 <div class="tool-actions">
-                    <button class="tool-action-btn star" aria-label="Toggle favorite for Pedigree Tracker" title="Toggle favorite" onclick="toggleFavorite(event, 'pedigree-tracker')">⭐</button>
-                    <button class="tool-action-btn hide" aria-label="Hide Pedigree Tracker" title="Hide tool" onclick="hideTool(event, 'pedigree-tracker')">👁️</button>
+                    <button class="tool-action-btn star" onclick="toggleFavorite(event, 'pedigree-tracker')">⭐</button>
+                    <button class="tool-action-btn hide" onclick="hideTool(event, 'pedigree-tracker')">👁️</button>
                 </div>
                 <div>
                     <div class="tool-icon">🧬</div>
@@ -491,8 +479,8 @@
             
             <div class="tool-card" data-id="data-cleaner" data-status="coming-soon">
                 <div class="tool-actions">
-                    <button class="tool-action-btn star" aria-label="Toggle favorite for Phenotype Data Cleaner" title="Toggle favorite" onclick="toggleFavorite(event, 'data-cleaner')">⭐</button>
-                    <button class="tool-action-btn hide" aria-label="Hide Phenotype Data Cleaner" title="Hide tool" onclick="hideTool(event, 'data-cleaner')">👁️</button>
+                    <button class="tool-action-btn star" onclick="toggleFavorite(event, 'data-cleaner')">⭐</button>
+                    <button class="tool-action-btn hide" onclick="hideTool(event, 'data-cleaner')">👁️</button>
                 </div>
                 <div>
                     <div class="tool-icon">📋</div>
@@ -513,7 +501,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2>⚙️ Dashboard Settings</h2>
-                <button class="close-btn" aria-label="Close settings modal" onclick="closeSettings()">&times;</button>
+                <button class="close-btn" onclick="closeSettings()">&times;</button>
             </div>
             
             <div class="settings-section">
@@ -532,7 +520,6 @@
         </div>
     </div>
     
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
     <script>
         // Data stored in memory
         let favorites = [];
@@ -675,7 +662,7 @@
                 const div = document.createElement('div');
                 div.className = 'quick-link-item';
                 div.innerHTML = `
-                    <a href="${link.url}" target="_blank">${sanitizeInput(link.name)}</a>
+                    <a href="${link.url}" target="_blank">${link.name}</a>
                     <button onclick="removeQuickLink(${index})">×</button>
                 `;
                 container.appendChild(div);
@@ -698,15 +685,14 @@
         function addQuickLink() {
             const name = document.getElementById('linkName').value.trim();
             const url = document.getElementById('linkUrl').value.trim();
-            const urlPattern = /^https?:\/\/[^\s/$.?#].[^\s]*$/i;
             
-            if (name && url && urlPattern.test(url)) {
-                quickLinks.push({ name: sanitizeInput(name), url });
+            if (name && url) {
+                quickLinks.push({ name, url });
                 localStorage.setItem('quickLinks', JSON.stringify(quickLinks));
                 renderQuickLinks();
                 toggleAddLinkForm();
             } else {
-                alert('Please enter a valid name and URL (starting with http:// or https://)');
+                alert('Please enter both name and URL');
             }
         }
         
@@ -714,13 +700,6 @@
             quickLinks.splice(index, 1);
             localStorage.setItem('quickLinks', JSON.stringify(quickLinks));
             renderQuickLinks();
-        }
-        
-        // Sanitize input to prevent XSS
-        function sanitizeInput(input) {
-            const div = document.createElement('div');
-            div.textContent = input;
-            return div.innerHTML;
         }
         
         // Settings Modal
@@ -786,26 +765,22 @@
             }
         }
         
-        // Export settings with error handling
+        // Export settings
         function exportSettings() {
-            try {
-                const settings = {
-                    favorites,
-                    hiddenTools,
-                    quickLinks,
-                    exportDate: new Date().toISOString()
-                };
-                
-                const blob = new Blob([JSON.stringify(settings, null, 2)], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `breeding-tools-settings-${Date.now()}.json`;
-                a.click();
-                URL.revokeObjectURL(url);
-            } catch (error) {
-                alert('Error exporting settings: ' + error.message);
-            }
+            const settings = {
+                favorites,
+                hiddenTools,
+                quickLinks,
+                exportDate: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(settings, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `breeding-tools-settings-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
         }
         
         // Import settings
@@ -835,40 +810,6 @@
                 }
             };
             reader.readAsText(file);
-        }
-        
-        // Mobile Transfer with QR Code
-        document.getElementById('transferToMobileBtn').addEventListener('click', () => {
-            const settings = { favorites, hiddenTools, quickLinks };
-            const url = `https://your-app.com/dashboard?config=${encodeURIComponent(JSON.stringify(settings))}`; // Replace with your actual URL
-            const modal = document.createElement('div');
-            modal.className = 'modal active';
-            modal.innerHTML = `
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h2>Scan to Transfer to Mobile</h2>
-                        <button class="close-btn" aria-label="Close transfer modal" onclick="this.closest('.modal').remove()">&times;</button>
-                    </div>
-                    <div id="qrcode"></div>
-                    <p style="text-align: center; margin-top: 10px;">Scan this QR code with your mobile device.</p>
-                </div>
-            `;
-            document.body.appendChild(modal);
-            QRCode.toCanvas(document.getElementById('qrcode'), url, { width: 200 }, (error) => {
-                if (error) {
-                    console.error(error);
-                    alert('Error generating QR code.');
-                }
-            });
-        });
-        
-        // Debounce utility (for potential future expansions, e.g., search if added)
-        function debounce(fn, ms) {
-            let timeout;
-            return function (...args) {
-                clearTimeout(timeout);
-                timeout = setTimeout(() => fn.apply(this, args), ms);
-            };
         }
         
         // Initialize on load
