@@ -21,7 +21,7 @@
         .header {
             text-align: center;
             color: white;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
         
         .header h1 {
@@ -35,13 +35,140 @@
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .control-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            backdrop-filter: blur(10px);
+        }
+        
+        .btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        
+        .btn-primary {
+            background: #4CAF50;
+        }
+        
+        .btn-primary:hover {
+            background: #45a049;
+        }
+        
+        .filter-btn {
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+        
+        .filter-btn.active {
+            background: rgba(255,255,255,0.4);
+            font-weight: bold;
+        }
+        
+        .quick-links {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            color: white;
+        }
+        
+        .quick-links h3 {
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .links-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .quick-link-item {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .quick-link-item a {
+            color: white;
+            text-decoration: none;
+        }
+        
+        .quick-link-item a:hover {
+            text-decoration: underline;
+        }
+        
+        .quick-link-item button {
+            background: rgba(255,255,255,0.3);
+            border: none;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 11px;
+        }
+        
+        .add-link-form {
+            display: none;
+            margin-top: 15px;
+            gap: 10px;
+        }
+        
+        .add-link-form.active {
+            display: flex;
+        }
+        
+        .add-link-form input {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 13px;
+        }
+        
+        .section-header {
+            color: white;
+            margin-bottom: 15px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
         .tools-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 25px;
             margin-bottom: 40px;
         }
@@ -53,11 +180,59 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             transition: transform 0.3s, box-shadow 0.3s;
             cursor: pointer;
+            position: relative;
+        }
+        
+        .tool-card.hidden {
+            display: none;
         }
         
         .tool-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        
+        .tool-card.favorited {
+            border: 2px solid #FFD700;
+        }
+        
+        .tool-actions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 5px;
+        }
+        
+        .tool-action-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            background: #f0f0f0;
+        }
+        
+        .tool-action-btn:hover {
+            transform: scale(1.1);
+            background: #e0e0e0;
+        }
+        
+        .tool-action-btn.star {
+            background: #fff;
+        }
+        
+        .tool-action-btn.star.active {
+            background: #FFD700;
+        }
+        
+        .tool-action-btn.hide {
+            background: #fff;
         }
         
         .tool-icon {
@@ -100,85 +275,545 @@
             font-size: 14px;
         }
         
-        .add-tool-btn {
-            background: rgba(255,255,255,0.2);
-            border: 2px dashed rgba(255,255,255,0.5);
-            color: white;
-            display: flex;
-            align-items: center;
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
             justify-content: center;
-            flex-direction: column;
-            min-height: 200px;
+            align-items: center;
         }
         
-        .add-tool-btn:hover {
-            background: rgba(255,255,255,0.3);
-            border-color: rgba(255,255,255,0.8);
+        .modal.active {
+            display: flex;
         }
         
-        .add-tool-btn .icon {
-            font-size: 48px;
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-header h2 {
+            color: #333;
+            font-size: 24px;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        .settings-section {
+            margin-bottom: 20px;
+        }
+        
+        .settings-section h3 {
+            color: #555;
+            font-size: 16px;
             margin-bottom: 10px;
+        }
+        
+        .settings-section button {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .settings-section button:hover {
+            background: #f5f5f5;
+            border-color: #4CAF50;
+        }
+        
+        .hidden-tools-list {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+        }
+        
+        .hidden-tool-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            margin-bottom: 5px;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+        
+        .hidden-tool-item button {
+            padding: 4px 12px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
         }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>🌱 Plant Breeding Tools Dashboard</h1>
-        <p>Your collection of experiment management tools</p>
+        <p>Your personalized collection of experiment management tools</p>
     </div>
     
     <div class="container">
-        <div class="tools-grid">
+        <!-- Controls -->
+        <div class="controls">
+            <div class="control-group">
+                <button class="btn filter-btn active" onclick="filterTools('all')">All Tools</button>
+                <button class="btn filter-btn" onclick="filterTools('favorites')">⭐ Favorites</button>
+                <button class="btn filter-btn" onclick="filterTools('active')">Active</button>
+            </div>
+            <div class="control-group">
+                <button class="btn" onclick="openSettings()">⚙️ Settings</button>
+                <button class="btn btn-primary" onclick="exportSettings()">💾 Export Settings</button>
+                <button class="btn" onclick="document.getElementById('importFile').click()">📂 Import Settings</button>
+                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importSettings(event)">
+            </div>
+        </div>
+        
+        <!-- Quick Links Section -->
+        <div class="quick-links">
+            <h3>📌 Quick Links</h3>
+            <div class="links-list" id="linksList">
+                <!-- Links will be added here -->
+            </div>
+            <div class="add-link-form" id="addLinkForm">
+                <input type="text" id="linkName" placeholder="Link name">
+                <input type="url" id="linkUrl" placeholder="https://...">
+                <button class="btn btn-primary" onclick="addQuickLink()">Add</button>
+                <button class="btn" onclick="toggleAddLinkForm()">Cancel</button>
+            </div>
+            <button class="btn" onclick="toggleAddLinkForm()" style="margin-top: 10px;">+ Add Link</button>
+        </div>
+        
+        <!-- Favorites Section -->
+        <div id="favoritesSection" style="display: none;">
+            <h2 class="section-header">⭐ Favorite Tools</h2>
+            <div class="tools-grid" id="favoritesGrid"></div>
+        </div>
+        
+        <!-- All Tools Section -->
+        <h2 class="section-header">🛠️ All Tools</h2>
+        <div class="tools-grid" id="toolsGrid">
             <!-- Experiment File Generator -->
-            <div class="tool-card" onclick="window.location.href='experiment-generator.html'">
-                <div class="tool-icon">📊</div>
-                <h3>Experiment File Generator</h3>
-                <p>Quickly create standardized CSV/Excel templates for new experiments with pre-configured columns and automatic numbering.</p>
-                <span class="status">Active</span>
+            <div class="tool-card" data-id="experiment-generator" data-status="active">
+                <div class="tool-actions">
+                    <button class="tool-action-btn star" onclick="toggleFavorite(event, 'experiment-generator')">⭐</button>
+                    <button class="tool-action-btn hide" onclick="hideTool(event, 'experiment-generator')">👁️</button>
+                </div>
+                <div onclick="window.location.href='experiment-file-generator.html'">
+                    <div class="tool-icon">📊</div>
+                    <h3>Experiment File Generator</h3>
+                    <p>Quickly create standardized CSV/Excel templates for new experiments with pre-configured columns and automatic numbering.</p>
+                    <span class="status">Active</span>
+                </div>
             </div>
             
             <!-- Seed Label Generator -->
-            <div class="tool-card" onclick="window.location.href='seed-labels.html'">
-                <div class="tool-icon">🏷️</div>
-                <h3>Seed Label Generator</h3>
-                <p>Create printable labels for seed packets with variety information, generation data, and collection dates.</p>
-                <span class="status">Active</span>
+            <div class="tool-card" data-id="seed-labels" data-status="active">
+                <div class="tool-actions">
+                    <button class="tool-action-btn star" onclick="toggleFavorite(event, 'seed-labels')">⭐</button>
+                    <button class="tool-action-btn hide" onclick="hideTool(event, 'seed-labels')">👁️</button>
+                </div>
+                <div onclick="window.location.href='seed-labels.html'">
+                    <div class="tool-icon">🏷️</div>
+                    <h3>Seed Label Generator</h3>
+                    <p>Create printable labels for seed packets with variety information, generation data, and collection dates.</p>
+                    <span class="status">Active</span>
+                </div>
             </div>
             
             <!-- Coming Soon Placeholders -->
-            <div class="tool-card">
-                <div class="tool-icon">📈</div>
-                <h3>Field Trial Randomizer</h3>
-                <p>Generate randomized field layouts for your breeding trials with blocking and replication support.</p>
-                <span class="status coming-soon">Coming Soon</span>
+            <div class="tool-card" data-id="field-randomizer" data-status="coming-soon">
+                <div class="tool-actions">
+                    <button class="tool-action-btn star" onclick="toggleFavorite(event, 'field-randomizer')">⭐</button>
+                    <button class="tool-action-btn hide" onclick="hideTool(event, 'field-randomizer')">👁️</button>
+                </div>
+                <div>
+                    <div class="tool-icon">📈</div>
+                    <h3>Field Trial Randomizer</h3>
+                    <p>Generate randomized field layouts for your breeding trials with blocking and replication support.</p>
+                    <span class="status coming-soon">Coming Soon</span>
+                </div>
             </div>
             
-            <div class="tool-card">
-                <div class="tool-icon">🧬</div>
-                <h3>Pedigree Tracker</h3>
-                <p>Visualize and manage crossing histories and pedigree relationships for your breeding lines.</p>
-                <span class="status coming-soon">Coming Soon</span>
+            <div class="tool-card" data-id="pedigree-tracker" data-status="coming-soon">
+                <div class="tool-actions">
+                    <button class="tool-action-btn star" onclick="toggleFavorite(event, 'pedigree-tracker')">⭐</button>
+                    <button class="tool-action-btn hide" onclick="hideTool(event, 'pedigree-tracker')">👁️</button>
+                </div>
+                <div>
+                    <div class="tool-icon">🧬</div>
+                    <h3>Pedigree Tracker</h3>
+                    <p>Visualize and manage crossing histories and pedigree relationships for your breeding lines.</p>
+                    <span class="status coming-soon">Coming Soon</span>
+                </div>
             </div>
             
-            <div class="tool-card">
-                <div class="tool-icon">📋</div>
-                <h3>Phenotype Data Cleaner</h3>
-                <p>Validate and clean phenotype data files with automatic outlier detection and quality checks.</p>
-                <span class="status coming-soon">Coming Soon</span>
-            </div>
-            
-            <!-- Add More Tools -->
-            <div class="tool-card add-tool-btn">
-                <div class="icon">➕</div>
-                <h3>Add New Tool</h3>
-                <p>Build your next utility</p>
+            <div class="tool-card" data-id="data-cleaner" data-status="coming-soon">
+                <div class="tool-actions">
+                    <button class="tool-action-btn star" onclick="toggleFavorite(event, 'data-cleaner')">⭐</button>
+                    <button class="tool-action-btn hide" onclick="hideTool(event, 'data-cleaner')">👁️</button>
+                </div>
+                <div>
+                    <div class="tool-icon">📋</div>
+                    <h3>Phenotype Data Cleaner</h3>
+                    <p>Validate and clean phenotype data files with automatic outlier detection and quality checks.</p>
+                    <span class="status coming-soon">Coming Soon</span>
+                </div>
             </div>
         </div>
         
         <div class="footer">
-            <p>Built for plant breeders, by plant breeders | Version 1.0</p>
+            <p>Built for plant breeders, by plant breeders | Personalized Dashboard v2.0</p>
         </div>
     </div>
+    
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>⚙️ Dashboard Settings</h2>
+                <button class="close-btn" onclick="closeSettings()">&times;</button>
+            </div>
+            
+            <div class="settings-section">
+                <h3>Hidden Tools</h3>
+                <div class="hidden-tools-list" id="hiddenToolsList">
+                    <p style="color: #999; text-align: center;">No hidden tools</p>
+                </div>
+            </div>
+            
+            <div class="settings-section">
+                <h3>Reset Options</h3>
+                <button onclick="resetFavorites()">Clear All Favorites</button>
+                <button onclick="resetHidden()">Show All Hidden Tools</button>
+                <button onclick="resetAll()">Reset Everything</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Data stored in memory
+        let favorites = [];
+        let hiddenTools = [];
+        let quickLinks = [];
+        let currentFilter = 'all';
+        
+        // Initialize on page load
+        function init() {
+            favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+            hiddenTools = JSON.parse(localStorage.getItem('hiddenTools') || '[]');
+            quickLinks = JSON.parse(localStorage.getItem('quickLinks') || '[]');
+            
+            renderDashboard();
+            renderQuickLinks();
+        }
+        
+        // Render dashboard
+        function renderDashboard() {
+            const allCards = document.querySelectorAll('#toolsGrid .tool-card');
+            const favSection = document.getElementById('favoritesSection');
+            const favGrid = document.getElementById('favoritesGrid');
+            
+            // Clear favorites grid
+            favGrid.innerHTML = '';
+            
+            // Update all cards
+            allCards.forEach(card => {
+                const id = card.dataset.id;
+                const starBtn = card.querySelector('.star');
+                
+                // Update star button
+                if (favorites.includes(id)) {
+                    starBtn.classList.add('active');
+                    // Clone to favorites section
+                    const clone = card.cloneNode(true);
+                    favGrid.appendChild(clone);
+                } else {
+                    starBtn.classList.remove('active');
+                }
+                
+                // Handle hidden tools
+                if (hiddenTools.includes(id)) {
+                    card.classList.add('hidden');
+                } else {
+                    card.classList.remove('hidden');
+                }
+            });
+            
+            // Show/hide favorites section
+            if (favorites.length > 0 && currentFilter !== 'favorites') {
+                favSection.style.display = 'block';
+            } else {
+                favSection.style.display = 'none';
+            }
+            
+            // Apply filters
+            applyFilter();
+        }
+        
+        // Toggle favorite
+        function toggleFavorite(event, id) {
+            event.stopPropagation();
+            
+            if (favorites.includes(id)) {
+                favorites = favorites.filter(f => f !== id);
+            } else {
+                favorites.push(id);
+            }
+            
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            renderDashboard();
+        }
+        
+        // Hide tool
+        function hideTool(event, id) {
+            event.stopPropagation();
+            
+            if (confirm('Hide this tool from your dashboard? You can unhide it in Settings.')) {
+                hiddenTools.push(id);
+                localStorage.setItem('hiddenTools', JSON.stringify(hiddenTools));
+                renderDashboard();
+                updateHiddenToolsList();
+            }
+        }
+        
+        // Show tool
+        function showTool(id) {
+            hiddenTools = hiddenTools.filter(h => h !== id);
+            localStorage.setItem('hiddenTools', JSON.stringify(hiddenTools));
+            renderDashboard();
+            updateHiddenToolsList();
+        }
+        
+        // Filter tools
+        function filterTools(filter) {
+            currentFilter = filter;
+            
+            // Update button states
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            applyFilter();
+        }
+        
+        function applyFilter() {
+            const allCards = document.querySelectorAll('#toolsGrid .tool-card');
+            const favSection = document.getElementById('favoritesSection');
+            
+            allCards.forEach(card => {
+                const id = card.dataset.id;
+                const status = card.dataset.status;
+                const isHidden = hiddenTools.includes(id);
+                const isFavorite = favorites.includes(id);
+                
+                if (isHidden) {
+                    card.style.display = 'none';
+                    return;
+                }
+                
+                if (currentFilter === 'all') {
+                    card.style.display = 'block';
+                } else if (currentFilter === 'favorites') {
+                    card.style.display = isFavorite ? 'block' : 'none';
+                    favSection.style.display = 'none';
+                } else if (currentFilter === 'active') {
+                    card.style.display = status === 'active' ? 'block' : 'none';
+                }
+            });
+        }
+        
+        // Quick Links
+        function renderQuickLinks() {
+            const container = document.getElementById('linksList');
+            container.innerHTML = '';
+            
+            quickLinks.forEach((link, index) => {
+                const div = document.createElement('div');
+                div.className = 'quick-link-item';
+                div.innerHTML = `
+                    <a href="${link.url}" target="_blank">${link.name}</a>
+                    <button onclick="removeQuickLink(${index})">×</button>
+                `;
+                container.appendChild(div);
+            });
+            
+            if (quickLinks.length === 0) {
+                container.innerHTML = '<p style="color: rgba(255,255,255,0.7); font-size: 13px;">No quick links added yet</p>';
+            }
+        }
+        
+        function toggleAddLinkForm() {
+            const form = document.getElementById('addLinkForm');
+            form.classList.toggle('active');
+            if (!form.classList.contains('active')) {
+                document.getElementById('linkName').value = '';
+                document.getElementById('linkUrl').value = '';
+            }
+        }
+        
+        function addQuickLink() {
+            const name = document.getElementById('linkName').value.trim();
+            const url = document.getElementById('linkUrl').value.trim();
+            
+            if (name && url) {
+                quickLinks.push({ name, url });
+                localStorage.setItem('quickLinks', JSON.stringify(quickLinks));
+                renderQuickLinks();
+                toggleAddLinkForm();
+            } else {
+                alert('Please enter both name and URL');
+            }
+        }
+        
+        function removeQuickLink(index) {
+            quickLinks.splice(index, 1);
+            localStorage.setItem('quickLinks', JSON.stringify(quickLinks));
+            renderQuickLinks();
+        }
+        
+        // Settings Modal
+        function openSettings() {
+            document.getElementById('settingsModal').classList.add('active');
+            updateHiddenToolsList();
+        }
+        
+        function closeSettings() {
+            document.getElementById('settingsModal').classList.remove('active');
+        }
+        
+        function updateHiddenToolsList() {
+            const container = document.getElementById('hiddenToolsList');
+            container.innerHTML = '';
+            
+            if (hiddenTools.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center;">No hidden tools</p>';
+                return;
+            }
+            
+            hiddenTools.forEach(id => {
+                const card = document.querySelector(`[data-id="${id}"]`);
+                const name = card ? card.querySelector('h3').textContent : id;
+                
+                const div = document.createElement('div');
+                div.className = 'hidden-tool-item';
+                div.innerHTML = `
+                    <span>${name}</span>
+                    <button onclick="showTool('${id}')">Show</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+        
+        // Reset functions
+        function resetFavorites() {
+            if (confirm('Remove all favorites?')) {
+                favorites = [];
+                localStorage.setItem('favorites', JSON.stringify(favorites));
+                renderDashboard();
+            }
+        }
+        
+        function resetHidden() {
+            if (confirm('Show all hidden tools?')) {
+                hiddenTools = [];
+                localStorage.setItem('hiddenTools', JSON.stringify(hiddenTools));
+                renderDashboard();
+                updateHiddenToolsList();
+            }
+        }
+        
+        function resetAll() {
+            if (confirm('Reset everything to defaults? This will clear favorites, hidden tools, and quick links.')) {
+                favorites = [];
+                hiddenTools = [];
+                quickLinks = [];
+                localStorage.clear();
+                renderDashboard();
+                renderQuickLinks();
+                updateHiddenToolsList();
+            }
+        }
+        
+        // Export settings
+        function exportSettings() {
+            const settings = {
+                favorites,
+                hiddenTools,
+                quickLinks,
+                exportDate: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(settings, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `breeding-tools-settings-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        // Import settings
+        function importSettings(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const settings = JSON.parse(e.target.result);
+                    
+                    if (settings.favorites) favorites = settings.favorites;
+                    if (settings.hiddenTools) hiddenTools = settings.hiddenTools;
+                    if (settings.quickLinks) quickLinks = settings.quickLinks;
+                    
+                    localStorage.setItem('favorites', JSON.stringify(favorites));
+                    localStorage.setItem('hiddenTools', JSON.stringify(hiddenTools));
+                    localStorage.setItem('quickLinks', JSON.stringify(quickLinks));
+                    
+                    renderDashboard();
+                    renderQuickLinks();
+                    
+                    alert('Settings imported successfully!');
+                } catch (error) {
+                    alert('Error importing settings. Please check the file format.');
+                }
+            };
+            reader.readAsText(file);
+        }
+        
+        // Initialize on load
+        init();
+    </script>
 </body>
 </html>
