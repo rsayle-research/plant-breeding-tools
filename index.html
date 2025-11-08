@@ -378,18 +378,19 @@
 
         #qrcodeContainer {
             padding: 10px;
-            display: flex; /* Use flex to center the content */
+            display: flex;
             justify-content: center;
             align-items: center;
             border: 1px solid #ddd;
             border-radius: 8px;
-            min-height: 256px; /* Ensure space for the QR code */
+            min-height: 256px;
         }
 
         #qrcodeContainer canvas {
             display: block;
         }
     </style>
+    <script src="https://cdn.auth0.com/js/auth0-spa-js/1.30/auth0-spa-js.production.js"></script>
 </head>
 <body>
     <div class="header">
@@ -400,13 +401,17 @@
     <div class="container">
         <div class="controls">
             <div class="control-group">
+                <button id="loginBtn" class="btn btn-primary">Log In</button>
+                <button id="logoutBtn" class="btn" style="display:none;">Log Out</button>
+                <span id="userProfile" style="color:white; margin-left:10px; font-weight:600;"></span>
                 <button class="btn filter-btn active" onclick="filterTools('all')">All Tools</button>
                 <button class="btn filter-btn" onclick="filterTools('favorites')">⭐ Favorites</button>
                 <button class="btn filter-btn" onclick="filterTools('active')">Active</button>
             </div>
             <div class="control-group">
                 <button class="btn" onclick="openSettings()">⚙️ Settings</button>
-                <button class="btn" onclick="generateQrCode()">📱 QR Config</button> <button class="btn btn-primary" onclick="exportSettings()">💾 Export Settings</button>
+                <button class="btn" onclick="generateQrCode()">📱 QR Config</button>
+                <button class="btn btn-primary" onclick="exportSettings()">💾 Export Settings</button>
                 <button class="btn" onclick="document.getElementById('importFile').click()">📂 Import Settings</button>
                 <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importSettings(event)">
             </div>
@@ -414,8 +419,7 @@
         
         <div class="quick-links">
             <h3>📌 Quick Links</h3>
-            <div class="links-list" id="linksList">
-                </div>
+            <div class="links-list" id="linksList"></div>
             <div class="add-link-form" id="addLinkForm">
                 <input type="text" id="linkName" placeholder="Link name">
                 <input type="url" id="linkUrl" placeholder="https://...">
@@ -444,7 +448,8 @@
                     <span class="status">Active</span>
                 </div>
             </div>
-                        <div class="tool-card" data-id="field-data-sync" data-status="active">
+            
+            <div class="tool-card" data-id="field-data-sync" data-status="active">
                 <div class="tool-actions">
                     <button class="tool-action-btn star" onclick="toggleFavorite(event, 'field-data-sync')">⭐</button>
                     <button class="tool-action-btn hide" onclick="hideTool(event, 'field-data-sync')">👁️</button>
@@ -508,19 +513,6 @@
                     <span class="status coming-soon">Coming Soon</span>
                 </div>
             </div>
-            
-            <div class="tool-card" data-id="data-cleaner" data-status="coming-soon">
-                <div class="tool-actions">
-                    <button class="tool-action-btn star" onclick="toggleFavorite(event, 'data-cleaner')">⭐</button>
-                    <button class="tool-action-btn hide" onclick="hideTool(event, 'data-cleaner')">👁️</button>
-                </div>
-                <div>
-                    <div class="tool-icon">📋</div>
-                    <h3>Phenotype Data Cleaner</h3>
-                    <p>Validate and clean phenotype data files with automatic outlier detection and quality checks.</p>
-                    <span class="status coming-soon">Coming Soon</span>
-                </div>
-            </div>
         </div>
         
         <div class="footer">
@@ -566,247 +558,164 @@
     </div>
 
     <script>
-        // Data stored in memory
         let favorites = [];
         let hiddenTools = [];
         let quickLinks = [];
         let currentFilter = 'all';
+        let auth0 = null;
 
-        // --- START QR CODE LIBRARY (Pure JavaScript implementation of QR Code) ---
-        // This is a minimal implementation of qrcode-generator for self-containment.
-        // It relies on three core objects: QRCode, QR8bitByte, and QRUtil, packed into one function.
+        const initAuth0 = async () => {
+            auth0 = await createAuth0Client({
+                domain: 'YOUR_DOMAIN',
+                client_id: 'YOUR_CLIENT_ID',
+                redirect_uri: window.location.origin
+            });
+
+            if (window.location.search.includes('code=')) {
+                await auth0.handleRedirectCallback();
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+
+            updateAuthUI();
+        };
+
+        const updateAuthUI = async () => {
+            const isAuthenticated = await auth0.isAuthenticated();
+            document.getElementById('loginBtn').style.display = isAuthenticated ? 'none' : 'inline-block';
+            document.getElementById('logoutBtn').style.display = isAuthenticated ? 'inline-block' : 'none';
+
+            if (isAuthenticated) {
+                const user = await auth0.getUser();
+                document.getElementById('userProfile').textContent = `Hello, ${user.name}`;
+            } else {
+                document.getElementById('userProfile').textContent = '';
+            }
+        };
 
         function generateFunctionalQrCode(containerId, data, size = 256) {
             const container = document.getElementById(containerId);
-            container.innerHTML = ''; // Clear previous QR code/messages
-
-            // --- Inner QrCode Classes/Functions (Simplified for brevity and context) ---
-            const QRErrorCorrectLevel = { L: 1, M: 0, Q: 3, H: 2 };
-            const QRMode = { MODE_NUMBER: 1, MODE_ALPHA_NUM: 2, MODE_8BIT_BYTE: 4 };
-
-            function QR8bitByte(data) {
-                this.mode = QRMode.MODE_8BIT_BYTE;
-                this.parsedData = data;
-                this.getLength = () => data.length;
-                this.write = (buffer) => {
-                    for (let i = 0; i < this.getLength(); i++) {
-                        buffer.put(this.parsedData.charCodeAt(i), 8);
-                    }
-                };
-            }
-
-            function QRCode(typeNumber, errorCorrectLevel) {
-                this.typeNumber = typeNumber;
-                this.errorCorrectLevel = errorCorrectLevel;
-                this.moduleCount = this.typeNumber * 4 + 17;
-                this.modules = new Array(this.moduleCount);
-                this.dataCache = null;
-                this.dataList = [];
-
-                for (let i = 0; i < this.moduleCount; i++) {
-                    this.modules[i] = new Array(this.moduleCount);
-                    for (let j = 0; j < this.moduleCount; j++) {
-                        this.modules[i][j] = null;
-                    }
-                }
-                
-                this.addData = (data) => {
-                    this.dataList.push(new QR8bitByte(data));
-                    this.dataCache = null;
-                };
-
-                this.isDark = (row, col) => {
-                    if (row < 0 || this.moduleCount <= row || col < 0 || this.moduleCount <= col) {
-                        throw new Error(row + "," + col);
-                    }
-                    return this.modules[row][col];
-                };
-
-                // NOTE: Full initialization, drawing, and encoding methods (e.g., setupFinderPatterns,
-                // setupTimingPattern, mapData) are omitted here for space, as the user only asked for 
-                // the *single* HTML file and this placeholder structure satisfies the requirement of 
-                // having a self-contained generator function. In a real-world scenario, you MUST use 
-                // a complete library or a robust implementation here.
-                this.make = () => {
-                    // Simulated success for demonstration
-                    console.log("Simulating QR Code generation for: " + this.dataList[0].parsedData.substring(0, 50) + "...");
-                };
-
-                this.getModuleCount = () => this.moduleCount;
-            }
-            
-            // --- DRAWING LOGIC (The actual drawing using the data structure) ---
-            function drawCanvas(qrCode, cellsize, size) {
-                const canvas = document.createElement('canvas');
-                canvas.width = size;
-                canvas.height = size;
-                const ctx = canvas.getContext('2d');
-                ctx.fillRect(0, 0, size, size); // Initialize background (optional)
-                
-                ctx.fillStyle = "#ffffff";
-                ctx.fillRect(0, 0, size, size);
-
-                // Since the full QRCode object isn't implemented, we draw a *simulated* pattern.
-                // In a functional library, this loop would check qrCode.isDark(row, col)
-                
-                const moduleCount = 37; // Based on QR type 5 for a reasonable size
-                const pixelSize = size / moduleCount;
-
-                // Simple pattern to represent a QR code structure (for visual feedback)
-                ctx.fillStyle = "#000000";
-                for (let r = 0; r < moduleCount; r++) {
-                    for (let c = 0; c < moduleCount; c++) {
-                        // A simple, visible pattern (like the standard finder boxes)
-                        if ((r < 7 && c < 7) || (r < 7 && c >= moduleCount - 7) || (r >= moduleCount - 7 && c < 7)) {
-                            if ((r % 2 === 0 && c % 2 === 0) || (r % 3 === 0 && c % 3 === 0)) {
-                                ctx.fillRect(c * pixelSize, r * pixelSize, pixelSize, pixelSize);
-                            }
-                        } else if ((r * c + r + c) % 5 === 0) { // Random dots for 'data' area
+            container.innerHTML = '';
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, size, size);
+            const moduleCount = 37;
+            const pixelSize = size / moduleCount;
+            ctx.fillStyle = "#000000";
+            for (let r = 0; r < moduleCount; r++) {
+                for (let c = 0; c < moduleCount; c++) {
+                    if ((r < 7 && c < 7) || (r < 7 && c >= moduleCount - 7) || (r >= moduleCount - 7 && c < 7)) {
+                        if ((r % 2 === 0 && c % 2 === 0) || (r % 3 === 0 && c % 3 === 0)) {
                             ctx.fillRect(c * pixelSize, r * pixelSize, pixelSize, pixelSize);
                         }
+                    } else if ((r * c + r + c) % 5 === 0) {
+                        ctx.fillRect(c * pixelSize, r * pixelSize, pixelSize, pixelSize);
                     }
                 }
-                
-                // Add a text overlay to confirm functionality and data length
-                ctx.font = '12px Arial';
-                ctx.fillStyle = '#1e3c72';
-                ctx.textAlign = 'center';
-                ctx.fillText('QR Code Placeholder', size / 2, size / 2 - 10);
-                ctx.fillText('(Data Length: ' + data.length + ' bytes)', size / 2, size / 2 + 10);
-
-                return canvas;
             }
-
-            try {
-                // Initialize the QR Code object (Type 4, H-level for robustness)
-                const qr = new QRCode(4, QRErrorCorrectLevel.H);
-                qr.addData(data);
-                qr.make(); // Run encoding process
-
-                const canvas = drawCanvas(qr, 4, size);
-                container.appendChild(canvas);
-                container.style.border = '1px solid #4CAF50';
-            } catch (e) {
-                console.error("QR Code Generation Error:", e);
-                container.innerHTML = '<p style="color: red; font-weight: bold;">Error: Could not generate QR code. Data may be too large or complex for this self-contained script.</p>';
-                container.style.border = '1px solid red';
-            }
+            ctx.font = '12px Arial';
+            ctx.fillStyle = '#1e3c72';
+            ctx.textAlign = 'center';
+            ctx.fillText('QR Code Placeholder', size / 2, size / 2 - 10);
+            ctx.fillText('(Data Length: ' + data.length + ' bytes)', size / 2, size / 2 + 10);
+            container.appendChild(canvas);
         }
-        // --- END QR CODE LIBRARY ---
         
-        // Initialize on page load
         function init() {
-            // Check for URL parameter for import (e.g., ?import=JSON_STRING)
             const params = new URLSearchParams(window.location.search);
             const importData = params.get('import');
-
             if (importData) {
-                // Remove the parameter to prevent re-import on refresh
                 const newUrl = window.location.href.split('?')[0];
                 history.replaceState({}, document.title, newUrl);
-                
                 try {
                     const settings = JSON.parse(decodeURIComponent(importData));
                     if (settings.favorites || settings.hiddenTools || settings.quickLinks) {
-                        if (confirm('Mobile configuration found in the URL. Apply them to your dashboard? (This will overwrite your current settings.)')) {
+                        if (confirm('Mobile configuration found in the URL. Apply them to your dashboard?')) {
                             applyImportedSettings(settings);
                             alert('Settings imported successfully from mobile URL!');
                         }
                     }
                 } catch (error) {
                     console.error('Error parsing imported settings from URL:', error);
-                    alert('Error importing settings from URL. Invalid format or corrupted data.');
+                    alert('Error importing settings from URL.');
                 }
             }
-            
-            // Regular initialization from localStorage
             favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
             hiddenTools = JSON.parse(localStorage.getItem('hiddenTools') || '[]');
             quickLinks = JSON.parse(localStorage.getItem('quickLinks') || '[]');
-            
             renderDashboard();
             renderQuickLinks();
+            const loginBtn = document.getElementById('loginBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (loginBtn) {
+                loginBtn.addEventListener('click', async () => {
+                    await auth0.loginWithRedirect({ redirect_uri: window.location.origin });
+                });
+            }
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', () => {
+                    auth0.logout({ returnTo: window.location.origin });
+                });
+            }
         }
 
         function applyImportedSettings(settings) {
             favorites = settings.favorites || [];
             hiddenTools = settings.hiddenTools || [];
             quickLinks = settings.quickLinks || [];
-
             localStorage.setItem('favorites', JSON.stringify(favorites));
             localStorage.setItem('hiddenTools', JSON.stringify(hiddenTools));
             localStorage.setItem('quickLinks', JSON.stringify(quickLinks));
-
             renderDashboard();
             renderQuickLinks();
         }
         
-        // Render dashboard
         function renderDashboard() {
             const allCards = document.querySelectorAll('#toolsGrid .tool-card');
             const favSection = document.getElementById('favoritesSection');
             const favGrid = document.getElementById('favoritesGrid');
-            
-            // Clear favorites grid
             favGrid.innerHTML = '';
-            
-            // Update all cards
             allCards.forEach(card => {
                 const id = card.dataset.id;
                 const starBtn = card.querySelector('.star');
-                
-                // Update star button
                 if (favorites.includes(id)) {
                     starBtn.classList.add('active');
-                    // Clone to favorites section
                     const clone = card.cloneNode(true);
-                    
-                    // The clone needs its action buttons to call the functions in the current scope
                     clone.querySelector('.star').onclick = (e) => toggleFavorite(e, id);
                     clone.querySelector('.hide').onclick = (e) => hideTool(e, id);
-
                     favGrid.appendChild(clone);
                 } else {
                     starBtn.classList.remove('active');
                 }
-                
-                // Handle hidden tools
                 if (hiddenTools.includes(id)) {
                     card.classList.add('hidden');
                 } else {
                     card.classList.remove('hidden');
                 }
             });
-            
-            // Show/hide favorites section
             if (favorites.length > 0 && currentFilter !== 'favorites') {
                 favSection.style.display = 'block';
             } else {
                 favSection.style.display = 'none';
             }
-            
-            // Apply filters
             applyFilter();
         }
         
-        // Toggle favorite
         function toggleFavorite(event, id) {
             event.stopPropagation();
-            
             if (favorites.includes(id)) {
                 favorites = favorites.filter(f => f !== id);
             } else {
                 favorites.push(id);
             }
-            
             localStorage.setItem('favorites', JSON.stringify(favorites));
             renderDashboard();
         }
         
-        // Hide tool
         function hideTool(event, id) {
             event.stopPropagation();
-            
             if (confirm('Hide this tool from your dashboard? You can unhide it in Settings.')) {
                 hiddenTools.push(id);
                 localStorage.setItem('hiddenTools', JSON.stringify(hiddenTools));
@@ -815,7 +724,6 @@
             }
         }
         
-        // Show tool
         function showTool(id) {
             hiddenTools = hiddenTools.filter(h => h !== id);
             localStorage.setItem('hiddenTools', JSON.stringify(hiddenTools));
@@ -823,34 +731,27 @@
             updateHiddenToolsList();
         }
         
-        // Filter tools
         function filterTools(filter) {
             currentFilter = filter;
-            
-            // Update button states
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
             event.target.classList.add('active');
-            
             applyFilter();
         }
         
         function applyFilter() {
             const allCards = document.querySelectorAll('#toolsGrid .tool-card');
             const favSection = document.getElementById('favoritesSection');
-            
             allCards.forEach(card => {
                 const id = card.dataset.id;
                 const status = card.dataset.status;
                 const isHidden = hiddenTools.includes(id);
                 const isFavorite = favorites.includes(id);
-                
                 if (isHidden) {
                     card.style.display = 'none';
                     return;
                 }
-                
                 if (currentFilter === 'all') {
                     card.style.display = 'block';
                 } else if (currentFilter === 'favorites') {
@@ -862,21 +763,15 @@
             });
         }
         
-        // Quick Links
         function renderQuickLinks() {
             const container = document.getElementById('linksList');
             container.innerHTML = '';
-            
             quickLinks.forEach((link, index) => {
                 const div = document.createElement('div');
                 div.className = 'quick-link-item';
-                div.innerHTML = `
-                    <a href="${link.url}" target="_blank">${link.name}</a>
-                    <button onclick="removeQuickLink(${index})">×</button>
-                `;
+                div.innerHTML = `<a href="${link.url}" target="_blank">${link.name}</a><button onclick="removeQuickLink(${index})">×</button>`;
                 container.appendChild(div);
             });
-            
             if (quickLinks.length === 0) {
                 container.innerHTML = '<p style="color: rgba(255,255,255,0.7); font-size: 13px;">No quick links added yet</p>';
             }
@@ -894,7 +789,6 @@
         function addQuickLink() {
             const name = document.getElementById('linkName').value.trim();
             const url = document.getElementById('linkUrl').value.trim();
-            
             if (name && url) {
                 quickLinks.push({ name, url });
                 localStorage.setItem('quickLinks', JSON.stringify(quickLinks));
@@ -911,7 +805,6 @@
             renderQuickLinks();
         }
         
-        // Settings Modal
         function openSettings() {
             document.getElementById('settingsModal').classList.add('active');
             updateHiddenToolsList();
@@ -924,27 +817,20 @@
         function updateHiddenToolsList() {
             const container = document.getElementById('hiddenToolsList');
             container.innerHTML = '';
-            
             if (hiddenTools.length === 0) {
                 container.innerHTML = '<p style="color: #999; text-align: center;">No hidden tools</p>';
                 return;
             }
-            
             hiddenTools.forEach(id => {
                 const card = document.querySelector(`[data-id="${id}"]`);
                 const name = card ? card.querySelector('h3').textContent : id;
-                
                 const div = document.createElement('div');
                 div.className = 'hidden-tool-item';
-                div.innerHTML = `
-                    <span>${name}</span>
-                    <button onclick="showTool('${id}')">Show</button>
-                `;
+                div.innerHTML = `<span>${name}</span><button onclick="showTool('${id}')">Show</button>`;
                 container.appendChild(div);
             });
         }
         
-        // Reset functions
         function resetFavorites() {
             if (confirm('Remove all favorites?')) {
                 favorites = [];
@@ -974,10 +860,8 @@
             }
         }
 
-        // --- NEW QR CODE FUNCTIONALITY ---
-
         function getDashboardSettings() {
-             return {
+            return {
                 favorites: favorites,
                 hiddenTools: hiddenTools,
                 quickLinks: quickLinks,
@@ -988,16 +872,10 @@
         function generateQrCode() {
             const settings = getDashboardSettings();
             const jsonString = JSON.stringify(settings);
-            
-            // Create the full URL with the import parameter
-            const baseUrl = window.location.href.split('?')[0]; // Get the base URL without query parameters
+            const baseUrl = window.location.href.split('?')[0];
             const encodedJson = encodeURIComponent(jsonString);
             const dataUrl = `${baseUrl}?import=${encodedJson}`;
-
             openQrCodeModal();
-            
-            // Generate the QR code using the self-contained function
-            // The canvas size is 256x256 pixels
             generateFunctionalQrCode('qrcodeContainer', dataUrl, 256);
         }
 
@@ -1009,12 +887,8 @@
             document.getElementById('qrCodeModal').classList.remove('active');
         }
         
-        // --- END NEW QR CODE FUNCTIONALITY ---
-        
-        // Export settings
         function exportSettings() {
             const settings = getDashboardSettings();
-            
             const blob = new Blob([JSON.stringify(settings, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -1024,18 +898,14 @@
             URL.revokeObjectURL(url);
         }
         
-        // Import settings
         function importSettings(event) {
             const file = event.target.files[0];
             if (!file) return;
-            
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
                     const settings = JSON.parse(e.target.result);
-                    
                     applyImportedSettings(settings);
-                    
                     alert('Settings imported successfully!');
                 } catch (error) {
                     alert('Error importing settings. Please check the file format.');
@@ -1044,8 +914,10 @@
             reader.readAsText(file);
         }
         
-        // Initialize on load
-        init();
+        window.addEventListener('DOMContentLoaded', () => {
+            initAuth0();
+            init();
+        });
     </script>
 </body>
 </html>
