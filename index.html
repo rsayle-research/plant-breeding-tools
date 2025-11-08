@@ -939,10 +939,10 @@
             reader.readAsText(file);
         }
         
-        window.addEventListener('DOMContentLoaded', () => {
-            initAuth0();
-            init();
-        });
+window.addEventListener('DOMContentLoaded', async () => {
+    await initAuth0(); // WAIT for Auth0 client to be created
+    init();            // Now it's safe to set up the login button listener
+});
     </script>
 </body>
 </html>
