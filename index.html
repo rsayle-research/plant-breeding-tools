@@ -390,304 +390,256 @@
             display: block;
         }
     </style>
-    <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
-</head>
-<body>
-    <div class="header">
-        <h1>🌱 Plant Breeding Tools Dashboard</h1>
-        <p>Your personalized collection of experiment management tools</p>
-    </div>
-    
-    <div class="container">
-        <div class="controls">
-            <div class="control-group">
-                <button id="loginBtn" class="btn btn-primary">Log In</button>
-                <button id="logoutBtn" class="btn" style="display:none;">Log Out</button>
-                <span id="userProfile" style="color:white; margin-left:10px; font-weight:600;"></span>
-                <button class="btn filter-btn active" onclick="filterTools('all')">All Tools</button>
-                <button class="btn filter-btn" onclick="filterTools('favorites')">⭐ Favorites</button>
-                <button class="btn filter-btn" onclick="filterTools('active')">Active</button>
-            </div>
-            <div class="control-group">
-                <button class="btn" onclick="openSettings()">⚙️ Settings</button>
-                <button class="btn" onclick="generateQrCode()">📱 QR Config</button>
-                <button class="btn btn-primary" onclick="exportSettings()">💾 Export Settings</button>
-                <button class="btn" onclick="document.getElementById('importFile').click()">📂 Import Settings</button>
-                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importSettings(event)">
-            </div>
-        </div>
-        
-        <div class="quick-links">
-            <h3>📌 Quick Links</h3>
-            <div class="links-list" id="linksList"></div>
-            <div class="add-link-form" id="addLinkForm">
-                <input type="text" id="linkName" placeholder="Link name">
-                <input type="url" id="linkUrl" placeholder="https://...">
-                <button class="btn btn-primary" onclick="addQuickLink()">Add</button>
-                <button class="btn" onclick="toggleAddLinkForm()">Cancel</button>
-            </div>
-            <button class="btn" onclick="toggleAddLinkForm()" style="margin-top: 10px;">+ Add Link</button>
-        </div>
-        
-        <div id="favoritesSection" style="display: none;">
-            <h2 class="section-header">⭐ Favorite Tools</h2>
-            <div class="tools-grid" id="favoritesGrid"></div>
-        </div>
-        
-        <h2 class="section-header">🛠️ All Tools</h2>
-        <div class="tools-grid" id="toolsGrid">
-            <div class="tool-card" data-id="experiment-generator" data-status="active">
-                <div class="tool-actions">
-                    <button class="tool-action-btn star" onclick="toggleFavorite(event, 'experiment-generator')">⭐</button>
-                    <button class="tool-action-btn hide" onclick="hideTool(event, 'experiment-generator')">👁️</button>
-                </div>
-                <div onclick="window.location.href='experiment-generator.html'">
-                    <div class="tool-icon">📊</div>
-                    <h3>Experiment File Generator</h3>
-                    <p>Quickly create standardized CSV/Excel templates for new experiments with pre-configured columns and automatic numbering.</p>
-                    <span class="status">Active</span>
-                </div>
-            </div>
-            
-            <div class="tool-card" data-id="field-data-sync" data-status="active">
-                <div class="tool-actions">
-                    <button class="tool-action-btn star" onclick="toggleFavorite(event, 'field-data-sync')">⭐</button>
-                    <button class="tool-action-btn hide" onclick="hideTool(event, 'field-data-sync')">👁️</button>
-                </div>
-                <div onclick="window.open('https://field-data-file-share.vercel.app/', '_blank')">
-                    <div class="tool-icon">☁️</div>
-                    <h3>Field Data Sync</h3>
-                    <p>Share and sync field data files between devices. Perfect for transferring observation data from mobile to desktop.</p>
-                    <span class="status">Active</span>
-                </div>
-            </div>
-            
-            <div class="tool-card" data-id="data-cleaner" data-status="coming-soon">
-                <div class="tool-actions">
-                    <button class="tool-action-btn star" onclick="toggleFavorite(event, 'data-cleaner')">⭐</button>
-                    <button class="tool-action-btn hide" onclick="hideTool(event, 'data-cleaner')">👁️</button>
-                </div>
-                <div>
-                    <div class="tool-icon">📋</div>
-                    <h3>Phenotype Data Cleaner</h3>
-                    <p>Validate and clean phenotype data files with automatic outlier detection and quality checks.</p>
-                    <span class="status coming-soon">Coming Soon</span>
-                </div>
-            </div>
-            
-            <div class="tool-card" data-id="seed-labels" data-status="active">
-                <div class="tool-actions">
-                    <button class="tool-action-btn star" onclick="toggleFavorite(event, 'seed-labels')">⭐</button>
-                    <button class="tool-action-btn hide" onclick="hideTool(event, 'seed-labels')">👁️</button>
-                </div>
-                <div onclick="window.location.href='seed-labels.html'">
-                    <div class="tool-icon">🏷️</div>
-                    <h3>Seed Label Generator</h3>
-                    <p>Create printable labels for seed packets with variety information, generation data, and collection dates.</p>
-                    <span class="status">Active</span>
-                </div>
-            </div>
-            
-            <div class="tool-card" data-id="field-randomizer" data-status="coming-soon">
-                <div class="tool-actions">
-                    <button class="tool-action-btn star" onclick="toggleFavorite(event, 'field-randomizer')">⭐</button>
-                    <button class="tool-action-btn hide" onclick="hideTool(event, 'field-randomizer')">👁️</button>
-                </div>
-                <div>
-                    <div class="tool-icon">📈</div>
-                    <h3>Field Trial Randomizer</h3>
-                    <p>Generate randomized field layouts for your breeding trials with blocking and replication support.</p>
-                    <span class="status coming-soon">Coming Soon</span>
-                </div>
-            </div>
-            
-            <div class="tool-card" data-id="pedigree-tracker" data-status="coming-soon">
-                <div class="tool-actions">
-                    <button class="tool-action-btn star" onclick="toggleFavorite(event, 'pedigree-tracker')">⭐</button>
-                    <button class="tool-action-btn hide" onclick="hideTool(event, 'pedigree-tracker')">👁️</button>
-                </div>
-                <div>
-                    <div class="tool-icon">🧬</div>
-                    <h3>Pedigree Tracker</h3>
-                    <p>Visualize and manage crossing histories and pedigree relationships for your breeding lines.</p>
-                    <span class="status coming-soon">Coming Soon</span>
-                </div>
-            </div>
-        </div>
-        
-        <div class="footer">
-            <p>Built for plant breeders, by plant breeders | Personalized Dashboard v2.1</p>
-        </div>
-    </div>
-    
-    <div class="modal" id="settingsModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>⚙️ Dashboard Settings</h2>
-                <button class="close-btn" onclick="closeSettings()">&times;</button>
-            </div>
-            
-            <div class="settings-section">
-                <h3>Hidden Tools</h3>
-                <div class="hidden-tools-list" id="hiddenToolsList">
-                    <p style="color: #999; text-align: center;">No hidden tools</p>
-                </div>
-            </div>
-            
-            <div class="settings-section">
-                <h3>Reset Options</h3>
-                <button onclick="resetFavorites()">Clear All Favorites</button>
-                <button onclick="resetHidden()">Show All Hidden Tools</button>
-                <button onclick="resetAll()">Reset Everything</button>
-            </div>
-        </div>
-    </div>
-    
-    <div class="modal" id="qrCodeModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>📱 Scan to Transfer Settings</h2>
-                <button class="close-btn" onclick="closeQrCodeModal()">&times;</button>
-            </div>
-            <p style="margin-bottom: 20px; color: #666; font-size: 14px;">Scan this QR code on your mobile device to import your current dashboard configuration (favorites, hidden tools, quick links).</p>
-            <div id="qrcodeContainer">
-                <p style="color: #4CAF50;">Generating QR Code...</p>
-            </div>
-            <p style="margin-top: 20px; color: #888; font-size: 12px;">For long configurations, the QR code may take a moment to scan. Keep the current page open.</p>
-        </div>
-    </div>
+<script>
+/* ------------------ GLOBAL STATE ------------------ */
+let auth0Client = null;
+let currentUser = null;
 
-    <script>
-        let favorites = [];
-        let hiddenTools = [];
-        let quickLinks = [];
-        let currentFilter = 'all';
-        let auth0Client = null;
+let favorites = [];
+let hiddenTools = [];
+let quickLinks = [];
+let currentFilter = 'all';
 
-        const initAuth0 = async () => {
-            try {
-                auth0Client = await window.auth0.createAuth0Client({
-                    domain: 'dev-hctfmbntodg4ekwd.us.auth0.com',
-                    client_id: 'v6yhw1p536sLDxH95gaT8DWd9KJ4nj6k',
-                    redirect_uri: window.location.origin
-                });
-            } catch (error) {
-                console.error('Auth0 initialization error:', error);
-                return;
-            }
-
-            if (window.location.search.includes('code=')) {
-                await auth0.handleRedirectCallback();
-                window.history.replaceState({}, document.title, window.location.pathname);
-            }
-
-            updateAuthUI();
-        };
-
-        const updateAuthUI = async () => {
-            const isAuthenticated = await auth0Client.isAuthenticated();
-            document.getElementById('loginBtn').style.display = isAuthenticated ? 'none' : 'inline-block';
-            document.getElementById('logoutBtn').style.display = isAuthenticated ? 'inline-block' : 'none';
-
-            if (isAuthenticated) {
-                const user = await auth0Client.getUser();
-                document.getElementById('userProfile').textContent = `Hello, ${user.name}`;
-            } else {
-                document.getElementById('userProfile').textContent = '';
-            }
-        };
-
-        function generateFunctionalQrCode(containerId, data, size = 256) {
-            const container = document.getElementById(containerId);
-            container.innerHTML = '';
-            const canvas = document.createElement('canvas');
-            canvas.width = size;
-            canvas.height = size;
-            const ctx = canvas.getContext('2d');
-            ctx.fillStyle = "#ffffff";
-            ctx.fillRect(0, 0, size, size);
-            const moduleCount = 37;
-            const pixelSize = size / moduleCount;
-            ctx.fillStyle = "#000000";
-            for (let r = 0; r < moduleCount; r++) {
-                for (let c = 0; c < moduleCount; c++) {
-                    if ((r < 7 && c < 7) || (r < 7 && c >= moduleCount - 7) || (r >= moduleCount - 7 && c < 7)) {
-                        if ((r % 2 === 0 && c % 2 === 0) || (r % 3 === 0 && c % 3 === 0)) {
-                            ctx.fillRect(c * pixelSize, r * pixelSize, pixelSize, pixelSize);
-                        }
-                    } else if ((r * c + r + c) % 5 === 0) {
-                        ctx.fillRect(c * pixelSize, r * pixelSize, pixelSize, pixelSize);
-                    }
-                }
-            }
-            ctx.font = '12px Arial';
-            ctx.fillStyle = '#1e3c72';
-            ctx.textAlign = 'center';
-            ctx.fillText('QR Code Placeholder', size / 2, size / 2 - 10);
-            ctx.fillText('(Data Length: ' + data.length + ' bytes)', size / 2, size / 2 + 10);
-            container.appendChild(canvas);
-        }
-        
-        function init() {
-            const params = new URLSearchParams(window.location.search);
-            const importData = params.get('import');
-            if (importData) {
-                const newUrl = window.location.href.split('?')[0];
-                history.replaceState({}, document.title, newUrl);
-                try {
-                    const settings = JSON.parse(decodeURIComponent(importData));
-                    if (settings.favorites || settings.hiddenTools || settings.quickLinks) {
-                        if (confirm('Mobile configuration found in the URL. Apply them to your dashboard?')) {
-                            applyImportedSettings(settings);
-                            alert('Settings imported successfully from mobile URL!');
-                        }
-                    }
-                } catch (error) {
-                    console.error('Error parsing imported settings from URL:', error);
-                    alert('Error importing settings from URL.');
-                }
-            }
-            favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-            hiddenTools = JSON.parse(localStorage.getItem('hiddenTools') || '[]');
-            quickLinks = JSON.parse(localStorage.getItem('quickLinks') || '[]');
-            renderDashboard();
-            renderQuickLinks();
-            const loginBtn = document.getElementById('loginBtn');
-            const logoutBtn = document.getElementById('logoutBtn');
-            if (loginBtn) {
-                loginBtn.addEventListener('click', async () => {
-                    console.log('Login button clicked. Auth0Client:', auth0Client);
-                    if (!auth0Client) {
-                        alert('Authentication is still loading. Please wait a moment and try again.');
-                        return;
-                    }
-                    try {
-                        await auth0Client.loginWithRedirect({
-    authorizationParams: {
-        client_id: 'v6yhw1p536sLDxH95gaT8DWd9KJ4nj6k', // ← explicitly add this
-        redirect_uri: 'https://rsayle-research.github.io/plant-breeding-tools/'
+/* ------------------ AUTH0 INIT ------------------ */
+const initAuth0 = async () => {
+    try {
+        auth0Client = await createAuth0Client({
+            domain: 'dev-hctfmbntodg4ekwd.us.auth0.com',
+            client_id: 'v6yhw1p536sLDxH95gaT8DWd9KJ4nj6k',
+            redirect_uri: window.location.origin,
+            cacheLocation: 'localStorage', // persist login across reloads
+            useRefreshTokens: true         // enable silent token refresh
+        });
+    } catch (err) {
+        console.error('Auth0 initialization error:', err);
+        alert('Failed to initialize authentication. Check console.');
+        return;
     }
-});
-                    } catch (error) {
-                        console.error('Login error:', error);
-                        alert('Login failed: ' + error.message);
-                    }
-                });
-            }
-            if (logoutBtn) {
-                logoutBtn.addEventListener('click', () => {
-                    if (auth0Client) {
-                        auth0Client.logout({ 
-                            logoutParams: {
-                                returnTo: window.location.origin 
-                            }
-                        });
-                    }
-                });
-            }
+
+    // Handle redirect callback after login
+    if (window.location.search.includes('code=')) {
+        try {
+            await auth0Client.handleRedirectCallback();
+            window.history.replaceState({}, document.title, window.location.pathname);
+        } catch (err) {
+            console.error('Error handling redirect callback:', err);
+        }
+    }
+
+    await updateAuthUI();
+};
+
+/* ------------------ UPDATE AUTH UI ------------------ */
+const updateAuthUI = async () => {
+    const isAuthenticated = await auth0Client.isAuthenticated();
+    document.getElementById('loginBtn').style.display = isAuthenticated ? 'none' : 'inline-block';
+    document.getElementById('logoutBtn').style.display = isAuthenticated ? 'inline-block' : 'none';
+
+    if (isAuthenticated) {
+        currentUser = await auth0Client.getUser();
+        document.getElementById('userProfile').textContent = `Hello, ${currentUser.name || currentUser.email}`;
+        loadUserSettings(); // load per-user settings from localStorage
+    } else {
+        currentUser = null;
+        document.getElementById('userProfile').textContent = '';
+    }
+};
+
+/* ------------------ LOGIN / LOGOUT ------------------ */
+const login = async () => {
+    if (!auth0Client) return alert('Auth is loading. Please wait a moment.');
+    try {
+        await auth0Client.loginWithRedirect({
+            authorizationParams: { redirect_uri: window.location.origin }
+        });
+    } catch (err) {
+        console.error('Login error:', err);
+        alert('Login failed: ' + err.message);
+    }
+};
+
+const logout = () => {
+    if (!auth0Client) return;
+    auth0Client.logout({ logoutParams: { returnTo: window.location.origin } });
+    currentUser = null;
+    document.getElementById('userProfile').textContent = '';
+    document.getElementById('loginBtn').style.display = 'inline-block';
+    document.getElementById('logoutBtn').style.display = 'none';
+};
+
+/* ------------------ DASHBOARD STATE ------------------ */
+const loadUserSettings = () => {
+    // Optionally, you could replace localStorage with a backend call here
+    favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    hiddenTools = JSON.parse(localStorage.getItem('hiddenTools') || '[]');
+    quickLinks = JSON.parse(localStorage.getItem('quickLinks') || '[]');
+    renderDashboard();
+    renderQuickLinks();
+};
+
+/* ------------------ FAVORITES & HIDDEN TOOLS ------------------ */
+const toggleFavorite = (event, id) => {
+    event.stopPropagation();
+    if (favorites.includes(id)) {
+        favorites = favorites.filter(f => f !== id);
+    } else {
+        favorites.push(id);
+    }
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+    renderDashboard();
+};
+
+const hideTool = (event, id) => {
+    event.stopPropagation();
+    if (!confirm('Hide this tool? You can restore it in settings.')) return;
+    if (!hiddenTools.includes(id)) hiddenTools.push(id);
+    localStorage.setItem('hiddenTools', JSON.stringify(hiddenTools));
+    renderDashboard();
+    updateHiddenToolsList();
+};
+
+const showTool = (id) => {
+    hiddenTools = hiddenTools.filter(h => h !== id);
+    localStorage.setItem('hiddenTools', JSON.stringify(hiddenTools));
+    renderDashboard();
+    updateHiddenToolsList();
+};
+
+/* ------------------ FILTERING ------------------ */
+const filterTools = (filter) => {
+    currentFilter = filter;
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    applyFilter();
+};
+
+const applyFilter = () => {
+    const allCards = document.querySelectorAll('#toolsGrid .tool-card');
+    const favSection = document.getElementById('favoritesSection');
+    allCards.forEach(card => {
+        const id = card.dataset.id;
+        const status = card.dataset.status;
+        const isHidden = hiddenTools.includes(id);
+        const isFavorite = favorites.includes(id);
+
+        if (isHidden) {
+            card.style.display = 'none';
+            return;
         }
 
-        function applyImportedSettings(settings) {
+        switch (currentFilter) {
+            case 'all': card.style.display = 'block'; break;
+            case 'favorites': card.style.display = isFavorite ? 'block' : 'none'; favSection.style.display = 'none'; break;
+            case 'active': card.style.display = status === 'active' ? 'block' : 'none'; break;
+        }
+    });
+};
+
+/* ------------------ RENDERING ------------------ */
+const renderDashboard = () => {
+    const allCards = document.querySelectorAll('#toolsGrid .tool-card');
+    const favGrid = document.getElementById('favoritesGrid');
+    favGrid.innerHTML = '';
+    allCards.forEach(card => {
+        const id = card.dataset.id;
+        const starBtn = card.querySelector('.star');
+        if (favorites.includes(id)) {
+            starBtn.classList.add('active');
+            const clone = card.cloneNode(true);
+            clone.querySelector('.star').onclick = (e) => toggleFavorite(e, id);
+            clone.querySelector('.hide').onclick = (e) => hideTool(e, id);
+            favGrid.appendChild(clone);
+        } else {
+            starBtn.classList.remove('active');
+        }
+        card.classList.toggle('hidden', hiddenTools.includes(id));
+    });
+    document.getElementById('favoritesSection').style.display = favorites.length > 0 && currentFilter !== 'favorites' ? 'block' : 'none';
+    applyFilter();
+};
+
+const renderQuickLinks = () => {
+    const container = document.getElementById('linksList');
+    container.innerHTML = '';
+    quickLinks.forEach((link, index) => {
+        const div = document.createElement('div');
+        div.className = 'quick-link-item';
+        div.innerHTML = `<a href="${link.url}" target="_blank">${link.name}</a><button onclick="removeQuickLink(${index})">×</button>`;
+        container.appendChild(div);
+    });
+    if (quickLinks.length === 0) container.innerHTML = '<p style="color: rgba(255,255,255,0.7); font-size: 13px;">No quick links added yet</p>';
+};
+
+/* ------------------ QUICK LINKS ------------------ */
+const toggleAddLinkForm = () => {
+    const form = document.getElementById('addLinkForm');
+    form.classList.toggle('active');
+    if (!form.classList.contains('active')) {
+        document.getElementById('linkName').value = '';
+        document.getElementById('linkUrl').value = '';
+    }
+};
+
+const addQuickLink = () => {
+    const name = document.getElementById('linkName').value.trim();
+    const url = document.getElementById('linkUrl').value.trim();
+    if (!name || !url) return alert('Please enter both name and URL');
+    quickLinks.push({ name, url });
+    localStorage.setItem('quickLinks', JSON.stringify(quickLinks));
+    renderQuickLinks();
+    toggleAddLinkForm();
+};
+
+const removeQuickLink = (index) => {
+    quickLinks.splice(index, 1);
+    localStorage.setItem('quickLinks', JSON.stringify(quickLinks));
+    renderQuickLinks();
+};
+
+/* ------------------ SETTINGS MODAL ------------------ */
+const openSettings = () => {
+    document.getElementById('settingsModal').classList.add('active');
+    updateHiddenToolsList();
+};
+const closeSettings = () => document.getElementById('settingsModal').classList.remove('active');
+const updateHiddenToolsList = () => {
+    const container = document.getElementById('hiddenToolsList');
+    container.innerHTML = '';
+    if (hiddenTools.length === 0) return container.innerHTML = '<p style="color: #999; text-align: center;">No hidden tools</p>';
+    hiddenTools.forEach(id => {
+        const card = document.querySelector(`[data-id="${id}"]`);
+        const name = card ? card.querySelector('h3').textContent : id;
+        const div = document.createElement('div');
+        div.className = 'hidden-tool-item';
+        div.innerHTML = `<span>${name}</span><button onclick="showTool('${id}')">Show</button>`;
+        container.appendChild(div);
+    });
+};
+
+/* ------------------ RESET FUNCTIONS ------------------ */
+const resetFavorites = () => { if (confirm('Remove all favorites?')) { favorites = []; localStorage.setItem('favorites', JSON.stringify(favorites)); renderDashboard(); } };
+const resetHidden = () => { if (confirm('Show all hidden tools?')) { hiddenTools = []; localStorage.setItem('hiddenTools', JSON.stringify(hiddenTools)); renderDashboard(); updateHiddenToolsList(); } };
+const resetAll = () => { if (confirm('Reset everything?')) { favorites = []; hiddenTools = []; quickLinks = []; localStorage.clear(); renderDashboard(); renderQuickLinks(); updateHiddenToolsList(); } };
+
+/* ------------------ EXPORT / IMPORT ------------------ */
+const getDashboardSettings = () => ({ favorites, hiddenTools, quickLinks, exportDate: new Date().toISOString() });
+
+const exportSettings = () => {
+    const blob = new Blob([JSON.stringify(getDashboardSettings(), null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `breeding-tools-settings-${Date.now()}.json`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+};
+
+const importSettings = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+        try {
+            const settings = JSON.parse(e.target.result);
             favorites = settings.favorites || [];
             hiddenTools = settings.hiddenTools || [];
             quickLinks = settings.quickLinks || [];
@@ -696,254 +648,45 @@
             localStorage.setItem('quickLinks', JSON.stringify(quickLinks));
             renderDashboard();
             renderQuickLinks();
-        }
-        
-        function renderDashboard() {
-            const allCards = document.querySelectorAll('#toolsGrid .tool-card');
-            const favSection = document.getElementById('favoritesSection');
-            const favGrid = document.getElementById('favoritesGrid');
-            favGrid.innerHTML = '';
-            allCards.forEach(card => {
-                const id = card.dataset.id;
-                const starBtn = card.querySelector('.star');
-                if (favorites.includes(id)) {
-                    starBtn.classList.add('active');
-                    const clone = card.cloneNode(true);
-                    clone.querySelector('.star').onclick = (e) => toggleFavorite(e, id);
-                    clone.querySelector('.hide').onclick = (e) => hideTool(e, id);
-                    favGrid.appendChild(clone);
-                } else {
-                    starBtn.classList.remove('active');
-                }
-                if (hiddenTools.includes(id)) {
-                    card.classList.add('hidden');
-                } else {
-                    card.classList.remove('hidden');
-                }
-            });
-            if (favorites.length > 0 && currentFilter !== 'favorites') {
-                favSection.style.display = 'block';
-            } else {
-                favSection.style.display = 'none';
-            }
-            applyFilter();
-        }
-        
-        function toggleFavorite(event, id) {
-            event.stopPropagation();
-            if (favorites.includes(id)) {
-                favorites = favorites.filter(f => f !== id);
-            } else {
-                favorites.push(id);
-            }
-            localStorage.setItem('favorites', JSON.stringify(favorites));
-            renderDashboard();
-        }
-        
-        function hideTool(event, id) {
-            event.stopPropagation();
-            if (confirm('Hide this tool from your dashboard? You can unhide it in Settings.')) {
-                hiddenTools.push(id);
-                localStorage.setItem('hiddenTools', JSON.stringify(hiddenTools));
-                renderDashboard();
-                updateHiddenToolsList();
-            }
-        }
-        
-        function showTool(id) {
-            hiddenTools = hiddenTools.filter(h => h !== id);
-            localStorage.setItem('hiddenTools', JSON.stringify(hiddenTools));
-            renderDashboard();
             updateHiddenToolsList();
+            alert('Settings imported successfully!');
+        } catch (err) {
+            alert('Error importing settings: check file format.');
         }
-        
-        function filterTools(filter) {
-            currentFilter = filter;
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            applyFilter();
-        }
-        
-        function applyFilter() {
-            const allCards = document.querySelectorAll('#toolsGrid .tool-card');
-            const favSection = document.getElementById('favoritesSection');
-            allCards.forEach(card => {
-                const id = card.dataset.id;
-                const status = card.dataset.status;
-                const isHidden = hiddenTools.includes(id);
-                const isFavorite = favorites.includes(id);
-                if (isHidden) {
-                    card.style.display = 'none';
-                    return;
-                }
-                if (currentFilter === 'all') {
-                    card.style.display = 'block';
-                } else if (currentFilter === 'favorites') {
-                    card.style.display = isFavorite ? 'block' : 'none';
-                    favSection.style.display = 'none';
-                } else if (currentFilter === 'active') {
-                    card.style.display = status === 'active' ? 'block' : 'none';
-                }
-            });
-        }
-        
-        function renderQuickLinks() {
-            const container = document.getElementById('linksList');
-            container.innerHTML = '';
-            quickLinks.forEach((link, index) => {
-                const div = document.createElement('div');
-                div.className = 'quick-link-item';
-                div.innerHTML = `<a href="${link.url}" target="_blank">${link.name}</a><button onclick="removeQuickLink(${index})">×</button>`;
-                container.appendChild(div);
-            });
-            if (quickLinks.length === 0) {
-                container.innerHTML = '<p style="color: rgba(255,255,255,0.7); font-size: 13px;">No quick links added yet</p>';
-            }
-        }
-        
-        function toggleAddLinkForm() {
-            const form = document.getElementById('addLinkForm');
-            form.classList.toggle('active');
-            if (!form.classList.contains('active')) {
-                document.getElementById('linkName').value = '';
-                document.getElementById('linkUrl').value = '';
-            }
-        }
-        
-        function addQuickLink() {
-            const name = document.getElementById('linkName').value.trim();
-            const url = document.getElementById('linkUrl').value.trim();
-            if (name && url) {
-                quickLinks.push({ name, url });
-                localStorage.setItem('quickLinks', JSON.stringify(quickLinks));
-                renderQuickLinks();
-                toggleAddLinkForm();
-            } else {
-                alert('Please enter both name and URL');
-            }
-        }
-        
-        function removeQuickLink(index) {
-            quickLinks.splice(index, 1);
-            localStorage.setItem('quickLinks', JSON.stringify(quickLinks));
-            renderQuickLinks();
-        }
-        
-        function openSettings() {
-            document.getElementById('settingsModal').classList.add('active');
-            updateHiddenToolsList();
-        }
-        
-        function closeSettings() {
-            document.getElementById('settingsModal').classList.remove('active');
-        }
-        
-        function updateHiddenToolsList() {
-            const container = document.getElementById('hiddenToolsList');
-            container.innerHTML = '';
-            if (hiddenTools.length === 0) {
-                container.innerHTML = '<p style="color: #999; text-align: center;">No hidden tools</p>';
-                return;
-            }
-            hiddenTools.forEach(id => {
-                const card = document.querySelector(`[data-id="${id}"]`);
-                const name = card ? card.querySelector('h3').textContent : id;
-                const div = document.createElement('div');
-                div.className = 'hidden-tool-item';
-                div.innerHTML = `<span>${name}</span><button onclick="showTool('${id}')">Show</button>`;
-                container.appendChild(div);
-            });
-        }
-        
-        function resetFavorites() {
-            if (confirm('Remove all favorites?')) {
-                favorites = [];
-                localStorage.setItem('favorites', JSON.stringify(favorites));
-                renderDashboard();
-            }
-        }
-        
-        function resetHidden() {
-            if (confirm('Show all hidden tools?')) {
-                hiddenTools = [];
-                localStorage.setItem('hiddenTools', JSON.stringify(hiddenTools));
-                renderDashboard();
-                updateHiddenToolsList();
-            }
-        }
-        
-        function resetAll() {
-            if (confirm('Reset everything to defaults? This will clear favorites, hidden tools, and quick links.')) {
-                favorites = [];
-                hiddenTools = [];
-                quickLinks = [];
-                localStorage.clear();
-                renderDashboard();
-                renderQuickLinks();
-                updateHiddenToolsList();
-            }
-        }
+    };
+    reader.readAsText(file);
+};
 
-        function getDashboardSettings() {
-            return {
-                favorites: favorites,
-                hiddenTools: hiddenTools,
-                quickLinks: quickLinks,
-                exportDate: new Date().toISOString()
-            };
-        }
+/* ------------------ QR CODE ------------------ */
+function generateFunctionalQrCode(containerId, data, size = 256) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    const canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, size, size);
+    // Simple placeholder pattern
+    ctx.fillStyle = "#000000";
+    ctx.font = '12px Arial';
+    ctx.fillText('QR Code Placeholder', size / 2, size / 2);
+    ctx.fillText(`Data length: ${data.length} bytes`, size / 2, size / 2 + 15);
+    container.appendChild(canvas);
+}
+const openQrCodeModal = () => document.getElementById('qrCodeModal').classList.add('active');
+const closeQrCodeModal = () => document.getElementById('qrCodeModal').classList.remove('active');
+const generateQrCode = () => {
+    const dataUrl = window.location.href.split('?')[0] + '?import=' + encodeURIComponent(JSON.stringify(getDashboardSettings()));
+    openQrCodeModal();
+    generateFunctionalQrCode('qrcodeContainer', dataUrl, 256);
+};
 
-        function generateQrCode() {
-            const settings = getDashboardSettings();
-            const jsonString = JSON.stringify(settings);
-            const baseUrl = window.location.href.split('?')[0];
-            const encodedJson = encodeURIComponent(jsonString);
-            const dataUrl = `${baseUrl}?import=${encodedJson}`;
-            openQrCodeModal();
-            generateFunctionalQrCode('qrcodeContainer', dataUrl, 256);
-        }
-
-        function openQrCodeModal() {
-            document.getElementById('qrCodeModal').classList.add('active');
-        }
-
-        function closeQrCodeModal() {
-            document.getElementById('qrCodeModal').classList.remove('active');
-        }
-        
-        function exportSettings() {
-            const settings = getDashboardSettings();
-            const blob = new Blob([JSON.stringify(settings, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `breeding-tools-settings-${Date.now()}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-        
-        function importSettings(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const settings = JSON.parse(e.target.result);
-                    applyImportedSettings(settings);
-                    alert('Settings imported successfully!');
-                } catch (error) {
-                    alert('Error importing settings. Please check the file format.');
-                }
-            };
-            reader.readAsText(file);
-        }
-        
+/* ------------------ INIT ON DOM ------------------ */
 window.addEventListener('DOMContentLoaded', async () => {
-    await initAuth0(); // WAIT for Auth0 client to be created
-    init();            // Now it's safe to set up the login button listener
+    await initAuth0(); // Ensure Auth0 is ready
 });
-    </script>
+</script>
+
 </body>
 </html>
