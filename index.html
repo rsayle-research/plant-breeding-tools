@@ -390,7 +390,7 @@
             display: block;
         }
     </style>
-    <script src="https://cdn.auth0.com/js/auth0-spa-js/1.30/auth0-spa-js.production.js"></script>
+    <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
 </head>
 <body>
     <div class="header">
@@ -656,17 +656,31 @@
             const logoutBtn = document.getElementById('logoutBtn');
             if (loginBtn) {
                 loginBtn.addEventListener('click', async () => {
+                    console.log('Login button clicked. Auth0Client:', auth0Client);
                     if (!auth0Client) {
                         alert('Authentication is still loading. Please wait a moment and try again.');
                         return;
                     }
-                    await auth0Client.loginWithRedirect({ redirect_uri: window.location.origin });
+                    try {
+                        await auth0Client.loginWithRedirect({
+                            authorizationParams: {
+                                redirect_uri: window.location.origin
+                            }
+                        });
+                    } catch (error) {
+                        console.error('Login error:', error);
+                        alert('Login failed: ' + error.message);
+                    }
                 });
             }
             if (logoutBtn) {
                 logoutBtn.addEventListener('click', () => {
                     if (auth0Client) {
-                        auth0Client.logout({ returnTo: window.location.origin });
+                        auth0Client.logout({ 
+                            logoutParams: {
+                                returnTo: window.location.origin 
+                            }
+                        });
                     }
                 });
             }
