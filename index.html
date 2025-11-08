@@ -255,9 +255,308 @@ function logout() {
 }
 
 /* ------------------ DASHBOARD STATE & RENDERING ------------------ */
-// The rest of your dashboard JS remains unchanged: loadUserSettings(), renderDashboard(), toggleFavorite(), hideTool(), showTool(), filterTools(), applyFilter(), renderQuickLinks(), addQuickLink(), removeQuickLink(), toggleAddLinkForm(), settings modal functions, reset/export/import functions, and QR code functions.
+});
+            }
+        }
 
-window.addEventListener('DOMContentLoaded', async()=>{ await initAuth0(); });
+        function applyImportedSettings(settings) {
+            favorites = settings.favorites || [];
+            hiddenTools = settings.hiddenTools || [];
+            quickLinks = settings.quickLinks || [];
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            localStorage.setItem('hiddenTools', JSON.stringify(hiddenTools));
+            localStorage.setItem('quickLinks', JSON.stringify(quickLinks));
+            renderDashboard();
+            renderQuickLinks();
+        }
+
+        function renderDashboard() {
+            const allCards = document.querySelectorAll('#toolsGrid .tool-card');
+            const favSection = document.getElementById('favoritesSection');
+            const favGrid = document.getElementById('favoritesGrid');
+            favGrid.innerHTML = '';
+            allCards.forEach(card => {
+                const id = card.dataset.id;
+                const starBtn = card.querySelector('.star');
+                if (favorites.includes(id)) {
+                    starBtn.classList.add('active');
+                    const clone = card.cloneNode(true);
+                    clone.querySelector('.star').onclick = (e) => toggleFavorite(e, id);
+                    clone.querySelector('.hide').onclick = (e) => hideTool(e, id);
+                    favGrid.appendChild(clone);
+                } else {
+                    starBtn.classList.remove('active');
+                }
+                if (hiddenTools.includes(id)) {
+                    card.classList.add('hidden');
+                } else {
+                    card.classList.remove('hidden');
+                }
+            });
+            if (favorites.length > 0 && currentFilter !== 'favorites') {
+                favSection.style.display = 'block';
+            } else {
+                favSection.style.display = 'none';
+            }
+            applyFilter();
+        }
+
+        function toggleFavorite(event, id) {
+            event.stopPropagation();
+            if (favorites.includes(id)) {
+                favorites = favorites.filter(f => f !== id);
+            } else {
+                favorites.push(id);
+            }
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            renderDashboard();
+        }
+
+        function hideTool(event, id) {
+            event.stopPropagation();
+            if (confirm('Hide this tool from your dashboard? You can unhide it in Settings.')) {
+                hiddenTools.push(id);
+                localStorage.setItem('hiddenTools', JSON.stringify(hiddenTools));
+                renderDashboard();
+                updateHiddenToolsList();
+            }
+        }
+
+        function showTool(id) {
+            hiddenTools = hiddenTools.filter(h => h !== id);
+            localStorage.setItem('hiddenTools', JSON.stringify(hiddenTools));
+            renderDashboard();
+            updateHiddenToolsList();
+        }
+
+        function filterTools(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            applyFilter();
+        }
+
+        function applyFilter() {
+            const allCards = document.querySelectorAll('#toolsGrid .tool-card');
+            const favSection = document.getElementById('favoritesSection');
+            allCards.forEach(card => {
+                const id = card.dataset.id;
+                const status = card.dataset.status;
+                const isHidden = hiddenTools.includes(id);
+                const isFavorite = favorites.includes(id);
+                if (isHidden) {
+                    card.style.display = 'none';
+                    return;
+                }
+                if (currentFilter === 'all') {
+                    card.style.display = 'block';
+                } else if (currentFilter === 'favorites') {
+                    card.style.display = isFavorite ? 'block' : 'none';
+                    favSection.style.display = 'none';
+                } else if (currentFilter === 'active') {
+                    card.style.display = status === 'active' ? 'block' : 'none';
+                }
+            });
+        }
+
+        function renderQuickLinks() {
+            const container = document.getElementById('linksList');
+            container.innerHTML = '';
+            quickLinks.forEach((link, index) => {
+                const div = document.createElement('div');
+                div.className = 'quick-link-item';
+                div.innerHTML = `<a href="${link.url}" target="_blank">${link.name}</a><button onclick="removeQuickLink(${index})">×</button>`;
+                container.appendChild(div);
+            });
+            if (quickLinks.length === 0) {
+                container.innerHTML = '<p style="color: rgba(255,255,255,0.7); font-size: 13px;">No quick links added yet</p>';
+            }
+        }
+
+        function toggleAddLinkForm() {
+            const form = document.getElementById('addLinkForm');
+            form.classList.toggle('active');
+            if (!form.classList.contains('active')) {
+                document.getElementById('linkName').value = '';
+                document.getElementById('linkUrl').value = '';
+            }
+        }
+
+        function addQuickLink() {
+            const name = document.getElementById('linkName').value.trim();
+            const url = document.getElementById('linkUrl').value.trim();
+            if (name && url) {
+                quickLinks.push({ name, url });
+                localStorage.setItem('quickLinks', JSON.stringify(quickLinks));
+                renderQuickLinks();
+                toggleAddLinkForm();
+            } else {
+                alert('Please enter both name and URL');
+            }
+        }
+
+        function removeQuickLink(index) {
+            quickLinks.splice(index, 1);
+            localStorage.setItem('quickLinks', JSON.stringify(quickLinks));
+            renderQuickLinks();
+        }
+
+        function openSettings() {
+            document.getElementById('settingsModal').classList.add('active');
+            updateHiddenToolsList();
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsModal').classList.remove('active');
+        }
+
+        function updateHiddenToolsList() {
+            const container = document.getElementById('hiddenToolsList');
+            container.innerHTML = '';
+            if (hiddenTools.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center;">No hidden tools</p>';
+                return;
+            }
+            hiddenTools.forEach(id => {
+                const card = document.querySelector(`[data-id="${id}"]`);
+                const name = card ? card.querySelector('h3').textContent : id;
+                const div = document.createElement('div');
+                div.className = 'hidden-tool-item';
+                div.innerHTML = `<span>${name}</span><button onclick="showTool('${id}')">Show</button>`;
+                container.appendChild(div);
+            });
+        }
+
+        function resetFavorites() {
+            if (confirm('Remove all favorites?')) {
+                favorites = [];
+                localStorage.setItem('favorites', JSON.stringify(favorites));
+                renderDashboard();
+            }
+        }
+
+        function resetHidden() {
+            if (confirm('Show all hidden tools?')) {
+                hiddenTools = [];
+                localStorage.setItem('hiddenTools', JSON.stringify(hiddenTools));
+                renderDashboard();
+                updateHiddenToolsList();
+            }
+        }
+
+        function resetAll() {
+            if (confirm('Reset everything to defaults? This will clear favorites, hidden tools, and quick links.')) {
+                favorites = [];
+                hiddenTools = [];
+                quickLinks = [];
+                localStorage.clear();
+                renderDashboard();
+                renderQuickLinks();
+                updateHiddenToolsList();
+            }
+        }
+
+        function getDashboardSettings() {
+            return {
+                favorites: favorites,
+                hiddenTools: hiddenTools,
+                quickLinks: quickLinks,
+                exportDate: new Date().toISOString()
+            };
+        }
+
+        function generateQrCode() {
+            const settings = getDashboardSettings();
+            const jsonString = JSON.stringify(settings);
+            const baseUrl = window.location.href.split('?')[0];
+            const encodedJson = encodeURIComponent(jsonString);
+            const dataUrl = `${baseUrl}?import=${encodedJson}`;
+            openQrCodeModal();
+            generateFunctionalQrCode('qrcodeContainer', dataUrl, 256);
+        }
+
+        function openQrCodeModal() {
+            document.getElementById('qrCodeModal').classList.add('active');
+        }
+
+        function closeQrCodeModal() {
+            document.getElementById('qrCodeModal').classList.remove('active');
+        }
+
+        function exportSettings() {
+            const settings = getDashboardSettings();
+            const blob = new Blob([JSON.stringify(settings, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `breeding-tools-settings-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+function applyImportedSettings(settings) {
+    // 1. Validate the structure of the imported data (optional but recommended)
+    if (!settings || typeof settings.favorites === 'undefined' || typeof settings.hiddenTools === 'undefined' || typeof settings.quickLinks === 'undefined') {
+        throw new Error('Invalid settings file format.');
+    }
+
+    // 2. Update global state variables
+    favorites = settings.favorites;
+    hiddenTools = settings.hiddenTools;
+    quickLinks = settings.quickLinks;
+
+    // 3. Save the new state to localStorage
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+    localStorage.setItem('hiddenTools', JSON.stringify(hiddenTools));
+    localStorage.setItem('quickLinks', JSON.stringify(quickLinks));
+
+    // 4. Re-render the UI to reflect the imported changes
+    renderDashboard();
+    renderQuickLinks();
+    // Assuming 'renderHiddenToolsList' is also a function you use in the Settings modal:
+    renderHiddenToolsList(); 
+}
+2. Corrected File Ending and Initialization
+Since we previously established that the DOMContentLoaded listener was causing timing issues, you need to call your initialization functions directly at the end of the script block.
+
+Assuming the functions were previously defined, here is how the end of your complete script should look, incorporating the direct function calls:
+
+JavaScript
+
+// ... (Your importSettings function definition)
+function applyImportedSettings(settings) {
+    // 1. Validation (for safety)
+    if (!settings || !Array.isArray(settings.favorites) || !Array.isArray(settings.hiddenTools)) {
+        throw new Error('Invalid settings structure.');
+    }
+
+    // 2. Update State
+    favorites = settings.favorites;
+    hiddenTools = settings.hiddenTools;
+    quickLinks = settings.quickLinks;
+
+    // 3. Update Storage
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+    localStorage.setItem('hiddenTools', JSON.stringify(hiddenTools));
+    localStorage.setItem('quickLinks', JSON.stringify(quickLinks));
+
+    // 4. Update UI
+    renderDashboard();
+    renderQuickLinks();
+    renderHiddenToolsList();
+}
+
+// ------------------------------------
+
+// INITIALIZATION CALLS (Replacing the old event listener)
+await initAuth0();
+// loadUserSettings and renderDashboard should be called after successful auth
+// but since the original script called them inside updateAuthUI:
+// loadUserSettings(); // This is called by updateAuthUI if authenticated
+// renderDashboard(); // This is called by loadUserSettings
+
 </script>
 </body>
 </html>
