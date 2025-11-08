@@ -562,14 +562,19 @@
         let hiddenTools = [];
         let quickLinks = [];
         let currentFilter = 'all';
-        let auth0 = null;
+        let auth0Client = null;
 
         const initAuth0 = async () => {
-            auth0 = await createAuth0Client({
-                domain: 'dev-hctfmbntodg4ekwd.us.auth0.com',
-                client_id: 'v6yhw1p536sLDxH95gaT8DWd9KJ4nj6k',
-                redirect_uri: window.location.origin
-            });
+            try {
+                auth0Client = await window.auth0.createAuth0Client({
+                    domain: 'dev-hctfmbntodg4ekwd.us.auth0.com',
+                    client_id: 'v6yhw1p536sLDxH95gaT8DWd9KJ4nj6k',
+                    redirect_uri: window.location.origin
+                });
+            } catch (error) {
+                console.error('Auth0 initialization error:', error);
+                return;
+            }
 
             if (window.location.search.includes('code=')) {
                 await auth0.handleRedirectCallback();
@@ -580,12 +585,12 @@
         };
 
         const updateAuthUI = async () => {
-            const isAuthenticated = await auth0.isAuthenticated();
+            const isAuthenticated = await auth0Client.isAuthenticated();
             document.getElementById('loginBtn').style.display = isAuthenticated ? 'none' : 'inline-block';
             document.getElementById('logoutBtn').style.display = isAuthenticated ? 'inline-block' : 'none';
 
             if (isAuthenticated) {
-                const user = await auth0.getUser();
+                const user = await auth0Client.getUser();
                 document.getElementById('userProfile').textContent = `Hello, ${user.name}`;
             } else {
                 document.getElementById('userProfile').textContent = '';
@@ -651,12 +656,18 @@
             const logoutBtn = document.getElementById('logoutBtn');
             if (loginBtn) {
                 loginBtn.addEventListener('click', async () => {
-                    await auth0.loginWithRedirect({ redirect_uri: window.location.origin });
+                    if (!auth0Client) {
+                        alert('Authentication is still loading. Please wait a moment and try again.');
+                        return;
+                    }
+                    await auth0Client.loginWithRedirect({ redirect_uri: window.location.origin });
                 });
             }
             if (logoutBtn) {
                 logoutBtn.addEventListener('click', () => {
-                    auth0.logout({ returnTo: window.location.origin });
+                    if (auth0Client) {
+                        auth0Client.logout({ returnTo: window.location.origin });
+                    }
                 });
             }
         }
