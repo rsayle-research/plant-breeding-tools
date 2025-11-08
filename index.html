@@ -663,10 +663,11 @@
                     }
                     try {
                         await auth0Client.loginWithRedirect({
-                            authorizationParams: {
-                                redirect_uri: 'https://rsayle-research.github.io/plant-breeding-tools/'
-                            }
-                        });
+    authorizationParams: {
+        client_id: 'v6yhw1p536sLDxH95gaT8DWd9KJ4nj6k', // ← explicitly add this
+        redirect_uri: 'https://rsayle-research.github.io/plant-breeding-tools/'
+    }
+});
                     } catch (error) {
                         console.error('Login error:', error);
                         alert('Login failed: ' + error.message);
