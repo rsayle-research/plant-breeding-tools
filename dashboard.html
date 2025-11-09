@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     
-    <script src="./auth.js"></script>
+    <!-- IMPORTANT FIX: Updated path to point to the 'js' folder -->
+    <script src="./js/auth.js"></script>
 
     <style>
         /* -------------------------------------------------
@@ -24,7 +25,7 @@
         html{font-size:16px}
         body{
             min-height:100vh;
-            font-family:'Inter', Arial, sans-serif;
+            font-family:'Inter', Arial, sans-serif; /* Using Inter font for better typography */
             background:var(--background-color);
             color:#333;
             line-height:1.6;
@@ -128,7 +129,7 @@
             text-decoration: none;
             display: flex;
             flex-direction: column;
-            min-height: 350px;
+            min-height: 350px; /* Ensure cards have similar height */
         }
         .card:hover{
             transform:translateY(-6px);
@@ -136,7 +137,7 @@
         }
         .card img{
             width:100%;
-            height:140px;
+            height:140px; /* Adjusted height for better card ratio */
             object-fit:cover;
         }
         .card-body{
@@ -219,7 +220,9 @@
             <span class="logo-text">Plant Breeding Tools</span>
             <div class="user-info">
                 <div class="user-profile" id="userProfile">
-                    </div>
+                    <!-- User info will be injected here by JS -->
+                </div>
+                <!-- Call the logout function from your auth.js -->
                 <button class="logout-btn" onclick="logout()">Logout</button>
             </div>
         </div>
@@ -230,6 +233,7 @@
             <h2>Your Plant Breeding Solutions</h2>
             <div class="grid">
 
+                <!-- Solution Card 1: Genomic Prediction -->
                 <a href="#" class="card">
                     <img src="https://placehold.co/600x400/3498db/ffffff?text=Genomic+Prediction" alt="Genomic Selection Tool">
                     <div class="card-body">
@@ -239,6 +243,7 @@
                     </div>
                 </a>
                 
+                <!-- Solution Card 2: Trial Management -->
                 <a href="#" class="card">
                     <img src="https://placehold.co/600x400/2ecc71/ffffff?text=Trial+Manager" alt="Field Trial Management">
                     <div class="card-body">
@@ -248,6 +253,7 @@
                     </div>
                 </a>
 
+                <!-- Solution Card 3: Advanced Crossing -->
                 <a href="#" class="card">
                     <img src="https://placehold.co/600x400/f1c40f/333333?text=Crossing+Planner" alt="Crossing Planner">
                     <div class="card-body">
@@ -268,6 +274,26 @@
     <script>
         // Placeholder image for when a user has no profile picture
         const DEFAULT_PROFILE_PIC = 'https://placehold.co/40x40/95a5a6/ffffff?text=U';
+
+        // --- RE-LOCATED UTILITY FUNCTION ---
+        // Moved here from auth.js to ensure it's defined BEFORE use in loadDashboard
+        function getRedirectUriPath(pageName) {
+            // 1. Get the path, e.g., /plant-breeding-tools/index.html
+            const pathname = window.location.pathname;
+            
+            // 2. Safely extract the root directory.
+            const pathSegments = pathname.split('/').filter(s => s.length > 0);
+            
+            if (pathSegments.length >= 1 && pathSegments[0] !== pageName && pathSegments[0] !== 'dashboard.html') {
+                // Assume the first segment is the subdirectory (e.g., 'plant-breeding-tools')
+                const subdirectory = pathSegments[0];
+                return '/' + subdirectory + '/' + pageName;
+            }
+            
+            // Fallback for root hosting or unusual environments
+            return '/' + pageName;
+        }
+        // -----------------------------------
         
         /**
          * Renders the user's profile information to the dashboard header.
@@ -319,17 +345,19 @@
                 } else {
                     // If no user, redirect back to login (index.html is assumed)
                     console.warn("User not authenticated, redirecting to login.");
-                    window.location.replace(window.location.origin + '/index.html');
+                    // getRedirectUriPath is now guaranteed to be defined here
+                    window.location.replace(window.location.origin + getRedirectUriPath('index.html')); 
                     return; 
                 }
 
             } catch (e) {
                 console.error('Error during dashboard load or Auth0 process:', e);
                 // Display error message
+                // getRedirectUriPath is now guaranteed to be defined here
                 loadingScreen.innerHTML = `
                     <p style="color: #c0392b; margin-bottom: 1rem;">Authentication Failed: ${e.message}</p>
                     <button class="logout-btn" onclick="logout()">Try Logging Out</button>
-                    <a href="${window.location.origin}/index.html" style="margin-top: 1rem; color: var(--primary-color);">Go to Home</a>
+                    <a href="${window.location.origin + getRedirectUriPath('index.html')}" style="margin-top: 1rem; color: var(--primary-color);">Go to Home</a>
                 `;
                 return;
             } finally {
