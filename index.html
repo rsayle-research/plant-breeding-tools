@@ -323,11 +323,22 @@ async function initAuth0() {
         
         // Step 3: Create Auth0 client
         debugLog('Creating Auth0 client...', 'info');
+        
+        // Determine redirect URI - use the full current URL without query params
+        let redirectUri = window.location.origin + window.location.pathname;
+        
+        // Ensure it ends with a slash
+        if (!redirectUri.endsWith('/')) {
+            redirectUri += '/';
+        }
+        
+        debugLog('Redirect URI: ' + redirectUri, 'info');
+        
         const config = {
             domain: 'dev-hctfmbntodg4ekwd.us.auth0.com',
             clientId: 'v6yhw1p536sLDxH95gaT8DWd9KJ4nj6k',
             authorizationParams: {
-                redirect_uri: window.location.origin
+                redirect_uri: redirectUri
             },
             cacheLocation: 'localstorage',
             useRefreshTokens: true
@@ -440,9 +451,17 @@ async function login() {
     try {
         debugLog('Starting login redirect...', 'info');
         
+        // Use the same redirect URI as initialization
+        let redirectUri = window.location.origin + window.location.pathname;
+        if (!redirectUri.endsWith('/')) {
+            redirectUri += '/';
+        }
+        
+        debugLog('Login redirect URI: ' + redirectUri, 'info');
+        
         await auth0Client.loginWithRedirect({
             authorizationParams: {
-                redirect_uri: window.location.origin
+                redirect_uri: redirectUri
             }
         });
         
@@ -474,9 +493,17 @@ async function logout() {
         localStorage.clear();
         debugLog('Local storage cleared', 'info');
         
+        // Use the same redirect URI
+        let returnTo = window.location.origin + window.location.pathname;
+        if (!returnTo.endsWith('/')) {
+            returnTo += '/';
+        }
+        
+        debugLog('Logout return URI: ' + returnTo, 'info');
+        
         await auth0Client.logout({
             logoutParams: {
-                returnTo: window.location.origin
+                returnTo: returnTo
             }
         });
         
