@@ -55,7 +55,9 @@ async function login(extra = {}) {
   const redirectUri = window.location.origin + getRedirectUriPath('dashboard.html');
   
   await auth0Client.loginWithRedirect({
-    authorizationParams: { redirect_uri, ...extra.authorizationParams }
+    // FIX APPLIED HERE: We explicitly map the variable 'redirectUri' 
+    // to the parameter 'redirect_uri'.
+    authorizationParams: { redirect_uri: redirectUri, ...extra.authorizationParams }
   });
 }
 
