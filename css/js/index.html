@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Genexis Cloud – Login</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/login.css" />
+  <script src="https://cdn.auth0.com/js/auth0-spa-js/2.1/auth0-spa-js.production.js"></script>
+</head>
+<body>
+
+  <header>
+    <a href="mailto:support@genexis.cloud">Contact Us</a>
+  </header>
+
+  <main class="login-container">
+    <div class="login-logo">
+      <img src="assets/logo.png" alt="Genexis Cloud Logo" />
+    </div>
+    <p class="login-slogan">Cloud based Collaboration in Life Sciences</p>
+
+    <div class="auth-buttons">
+      <button id="signinBtn" class="auth-btn signin-btn">Sign In</button>
+      <button id="signupBtn" class="auth-btn signup-btn">Create an Account</button>
+    </div>
+
+    <section class="solutions">
+      <h2>Our Solutions</h2>
+      <div class="grid">
+        <div class="card">
+          <img src="https://via.placeholder.com/400x180/4a90e2/ffffff?text=Genomic+Data+Analysis" alt="">
+          <div class="card-body"><h3>Genomic Data Analysis</h3><p>Process, analyze, and visualize large-scale genomic datasets.</p><span class="badge">Active</span></div>
+        </div>
+        <div class="card">
+          <img src="https://via.placeholder.com/400x180/50c8ff/ffffff?text=RNA+Sequencing" alt="">
+          <div class="card-body"><h3>RNA Sequencing</h3><p>From raw reads to differential expression.</p><span class="badge">Active</span></div>
+        </div>
+        <div class="card">
+          <img src="https://via.placeholder.com/400x180/7ed321/ffffff?text=Unassembling" alt="">
+          <div class="card-body"><h3>Unassembling</h3><p>De-novo assembly of complex genomes.</p><span class="badge">Coming Soon</span></div>
+        </div>
+        <div class="card">
+          <img src="https://via.placeholder.com/400x180/ff6b6b/ffffff?text=Protein+Cryo-EM" alt="">
+          <div class="card-body"><h3>Protein Cryo-EM</h3><p>High-resolution structure determination.</p><span class="badge">Active</span></div>
+        </div>
+        <div class="card">
+          <img src="https://via.placeholder.com/400x180/ffb800/ffffff?text=High+Scale" alt="">
+          <div class="card-body"><h3>High Scale</h3><p>Process terabyte-scale datasets.</p><span class="badge">Active</span></div>
+        </div>
+        <div class="card">
+          <img src="https://via.placeholder.com/400x180/9b59b6/ffffff?text=Costly+Sets" alt="">
+          <div class="card-body"><h3>Costly Sets</h3><p>Advanced statistical modeling.</p><span class="badge">Coming Soon</span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>© 2025 Genexis Cloud. All rights reserved.</footer>
+
+  <script src="js/auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        await initAuth0();
+        if (await auth0Client.isAuthenticated()) {
+          window.location.href = 'dashboard.html';
+        } else {
+          document.getElementById('signinBtn').onclick = () => login();
+          document.getElementById('signupBtn').onclick = () => signup();
+        }
+      } catch (e) { console.error(e); alert('Auth failed'); }
+    });
+    function signup() { login({ authorizationParams: { screen_hint: 'signup' } }); }
+  </script>
+</body>
+</html>
