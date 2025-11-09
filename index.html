@@ -2,88 +2,265 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<title>Genexis Cloud – Bioinformatics Solutions</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Plant Breeding Tools Dashboard</title>
+
 <!-- Auth0 SPA JS -->
 <script src="https://cdn.auth0.com/js/auth0-spa-js/2.1/auth0-spa-js.production.js"></script>
+
 <style>
-/* ------------------ RESET & GLOBAL ------------------ */
-* { margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-body { min-height:100vh; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color:#fff; padding:20px; }
-button { cursor:pointer; transition:0.2s; }
-a { color:inherit; text-decoration:none; }
-a:hover { text-decoration:underline; }
-
-/* ------------------ DEBUG CONSOLE ------------------ */
-.debug-console { 
-    position: fixed; 
-    bottom: 20px; 
-    right: 20px; 
-    width: 400px;
-    max-height: 400px;
-    background: rgba(0, 0, 0, 0.95);
-    border: 2px solid #00ff00;
-    border-radius: 8px;
-    padding: 15px;
-    font-family: 'Courier New', monospace;
-    font-size: 12px;
-    overflow-y: auto;
-    z-index: 10000;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-}
-.debug-console h4 {
-    color: #00ff00;
-    margin-bottom: 10px;
-    font-size: 14px;
-    border-bottom: 1px solid #00ff00;
-    padding-bottom: 5px;
-}
-.debug-line {
-    margin: 5px 0;
-    padding: 3px 5px;
-    border-radius: 3px;
-}
-.debug-line.info { color: #00bfff; }
-.debug-line.success { color: #00ff00; background: rgba(0, 255, 0, 0.1); }
-.debug-line.error { color: #ff4444; background: rgba(255, 0, 0, 0.1); }
-.debug-line.warning { color: #ffaa00; background: rgba(255, 170, 0, 0.1); }
-.debug-toggle {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    padding: 10px 15px;
-    background: rgba(0, 255, 0, 0.2);
-    border: 2px solid #00ff00;
-    border-radius: 5px;
-    color: #00ff00;
-    font-weight: bold;
-    z-index: 9999;
+/* -------------------------------------------------
+   GLOBAL RESET & TYPOGRAPHY
+------------------------------------------------- */
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:16px}
+body{
+    min-height:100vh;
+    font-family:'Segoe UI',Arial,sans-serif;
+    background:#f4f7fb;
+    color:#333;
+    line-height:1.5;
 }
 
-/* ------------------ HEADER ------------------ */
+/* -------------------------------------------------
+   LAYOUT CONTAINER
+------------------------------------------------- */
+.container{
+    max-width:1400px;
+    margin:0 auto;
+    padding:0 1rem;
+}
+
+/* -------------------------------------------------
+   HEADER (logo + nav + CTA)
+------------------------------------------------- */
+header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:1.5rem 0;
+}
+.logo img{height:48px}
+nav ul{
+    display:flex;
+    gap:2rem;
+    list-style:none;
+}
+nav a{
+    color:#2c3e50;
+    font-weight:600;
+    text-decoration:none;
+    transition:color .2s;
+}
+nav a:hover{color:#0066ff}
+.cta-btn{
+    background:#0066ff;
+    color:#fff;
+    padding:.6rem 1.4rem;
+    border-radius:8px;
+    font-weight:600;
+    text-decoration:none;
+    transition:background .2s;
+}
+.cta-btn:hover{background:#0052cc}
+
+/* -------------------------------------------------
+   HERO SECTION
+------------------------------------------------- */
+.hero{
+    text-align:center;
+    padding:4rem 0 3rem;
+}
+.hero h1{
+    font-size:2.8rem;
+    margin-bottom:.8rem;
+    color:#2c3e50;
+}
+.hero p{
+    font-size:1.2rem;
+    max-width:720px;
+    margin:0 auto 2rem;
+    color:#555;
+}
+.search-bar{
+    max-width:560px;
+    margin:0 auto;
+    display:flex;
+    background:#fff;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
+.search-bar input{
+    flex:1;
+    padding:1rem 1.2rem;
+    border:none;
+    font-size:1rem;
+}
+.search-bar button{
+    background:#0066ff;
+    color:#fff;
+    border:none;
+    padding:0 1.8rem;
+    font-weight:600;
+    cursor:pointer;
+}
+
+/* -------------------------------------------------
+   SOLUTIONS GRID
+------------------------------------------------- */
+.solutions{
+    padding:4rem 0;
+}
+.solutions h2{
+    text-align:center;
+    font-size:2.2rem;
+    margin-bottom:2.5rem;
+    color:#2c3e50;
+}
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+    gap:1.8rem;
+}
+.card{
+    background:#fff;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 4px 16px rgba(0,0,0,.07);
+    transition:transform .25s,box-shadow .25s;
+}
+.card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 12px 28px rgba(0,0,0,.12);
+}
+.card img{
+    width:100%;
+    height:180px;
+    object-fit:cover;
+}
+.card-body{
+    padding:1.4rem;
+}
+.card h3{
+    font-size:1.25rem;
+    margin-bottom:.5rem;
+    color:#2c3e50;
+}
+.card p{
+    font-size:.92rem;
+    color:#666;
+    margin-bottom:1rem;
+}
+.card .badge{
+    display:inline-block;
+    background:#e0f2ff;
+    color:#0066ff;
+    font-size:.78rem;
+    font-weight:600;
+    padding:.25rem .65rem;
+    border-radius:20px;
+}
+
+/* -------------------------------------------------
+   API SECTION
+------------------------------------------------- */
+.api-section{
+    background:#fff;
+    padding:4rem 0;
+    text-align:center;
+}
+.api-section h2{
+    font-size:2rem;
+    margin-bottom:1.5rem;
+    color:#2c3e50;
+}
+.code-block{
+    max-width:720px;
+    margin:2rem auto;
+    background:#1e1e1e;
+    color:#dcdcdc;
+    padding:1.5rem;
+    border-radius:8px;
+    font-family:'Courier New',monospace;
+    text-align:left;
+    overflow-x:auto;
+}
+
+/* -------------------------------------------------
+   FOOTER
+------------------------------------------------- */
+footer{
+    background:#2c3e50;
+    color:#ddd;
+    text-align:center;
+    padding:2rem 0;
+    font-size:.9rem;
+}
+
+/* -------------------------------------------------
+   DASHBOARD BUTTON
+------------------------------------------------- */
+.dashboard-btn{
+    position:fixed;
+    top:1.2rem;
+    right:1.2rem;
+    background:#28a745;
+    color:#fff;
+    padding:.6rem 1.2rem;
+    border-radius:8px;
+    font-weight:600;
+    text-decoration:none;
+    box-shadow:0 2px 8px rgba(0,0,0,.15);
+    z-index:999;
+}
+.dashboard-btn:hover{background:#218838}
+
+/* -------------------------------------------------
+   DEBUG CONSOLE
+------------------------------------------------- */
+.debug-console{
+    position:fixed;bottom:20px;right:20px;width:400px;max-height:400px;
+    background:rgba(0,0,0,.95);border:2px solid #00ff00;border-radius:8px;
+    padding:15px;font-family:'Courier New',monospace;font-size:12px;
+    overflow-y:auto;z-index:10000;box-shadow:0 4px 20px rgba(0,0,0,.5);
+    display:none;
+}
+.debug-console h4{color:#00ff00;margin-bottom:10px;border-bottom:1px solid #00ff00;padding-bottom:5px}
+.debug-line{margin:5px 0;padding:3px 5px;border-radius:3px}
+.debug-line.info{color:#00bfff}
+.debug-line.success{color:#00ff00;background:rgba(0,255,0,.1)}
+.debug-line.error{color:#ff4444;background:rgba(255,0,0,.1)}
+.debug-line.warning{color:#ffaa00;background:rgba(255,170,0,.1)}
+.debug-toggle{
+    position:fixed;bottom:20px;right:20px;
+    padding:10px 15px;background:rgba(0,255,0,.2);
+    border:2px solid #00ff00;border-radius:5px;color:#00ff00;
+    font-weight:bold;z-index:9999;
+}
+
+/* -------------------------------------------------
+   ORIGINAL DASHBOARD (kept hidden)
+------------------------------------------------- */
+#originalDashboard{display:none}
+
+/* -------------------------------------------------
+   ORIGINAL DASHBOARD STYLES (unchanged)
+------------------------------------------------- */
 .header { text-align:center; margin-bottom:30px; }
 .header h1 { font-size:2.5rem; margin-bottom:0.3rem; }
 .header p { font-size:1rem; opacity:0.85; }
-.auth-status { 
-    margin-top: 10px; 
-    padding: 10px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 8px;
-    font-size: 14px;
-}
+.auth-status { margin-top: 10px; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 8px; font-size: 14px; }
 .auth-controls { margin-top:10px; display:flex; justify-content:center; gap:10px; flex-wrap:wrap; align-items:center; }
 .auth-controls button { padding:8px 16px; border:none; border-radius:8px; font-weight:600; backdrop-filter:blur(5px); background:rgba(255,255,255,0.2); color:#fff; }
 .auth-controls button:hover { background:rgba(255,255,255,0.35); }
 .auth-controls button:disabled { opacity:0.5; cursor:not-allowed; }
 
-/* ------------------ CONTAINER ------------------ */
-.container { max-width:1400px; margin:0 auto; }
 .controls { display:flex; justify-content:space-between; align-items:center; margin-bottom:25px; flex-wrap:wrap; gap:10px; }
 .filter-btn { padding:8px 16px; font-size:13px; border:none; border-radius:8px; background:rgba(255,255,255,0.2); color:#fff; }
 .filter-btn.active { background:rgba(255,255,255,0.4); font-weight:bold; }
 .filter-btn:hover { background:rgba(255,255,255,0.35); }
 
-/* ------------------ QUICK LINKS ------------------ */
 .quick-links { backdrop-filter:blur(10px); background:rgba(255,255,255,0.15); padding:20px; border-radius:12px; margin-bottom:30px; }
 .quick-links h3 { margin-bottom:15px; font-size:1.1rem; }
 .links-list { display:flex; flex-wrap:wrap; gap:10px; }
@@ -93,7 +270,6 @@ a:hover { text-decoration:underline; }
 .add-link-form.active { display:flex; }
 .add-link-form input { flex:1; padding:8px 12px; border-radius:6px; border:none; font-size:13px; }
 
-/* ------------------ TOOL CARDS ------------------ */
 .tools-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); gap:25px; margin-bottom:40px; }
 .tool-card { background:#fff; color:#333; border-radius:12px; padding:25px; box-shadow:0 8px 25px rgba(0,0,0,0.2); transition:0.3s; position:relative; cursor:pointer; }
 .tool-card:hover { transform:translateY(-5px); box-shadow:0 12px 35px rgba(0,0,0,0.3); }
@@ -107,14 +283,11 @@ a:hover { text-decoration:underline; }
 .tool-action-btn.star.active { background:#FFD700; }
 .tool-card.hidden { display:none; }
 
-/* ------------------ FAVORITES ------------------ */
 #favoritesSection { margin-bottom:30px; }
 #favoritesSection h3 { margin-bottom:15px; font-size:1.2rem; }
 
-/* ------------------ FOOTER ------------------ */
 .footer { text-align:center; margin-top:40px; font-size:14px; opacity:0.75; }
 
-/* ------------------ MODALS ------------------ */
 .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); justify-content:center; align-items:center; z-index:1000; }
 .modal.active { display:flex; }
 .modal-content { background:#fff; color:#333; padding:30px; border-radius:15px; max-width:500px; width:90%; text-align:center; position:relative; }
@@ -125,25 +298,135 @@ a:hover { text-decoration:underline; }
 .settings-section button { width:100%; padding:12px; margin-bottom:10px; border:1px solid #ddd; border-radius:8px; background:#fff; transition:0.2s; }
 .settings-section button:hover { background:#f5f5f5; border-color:#4CAF50; }
 
-/* ------------------ HIDDEN TOOLS LIST ------------------ */
 .hidden-tools-list { max-height:200px; overflow-y:auto; border:1px solid #ddd; border-radius:8px; padding:10px; }
 .hidden-tool-item { display:flex; justify-content:space-between; align-items:center; padding:8px; margin-bottom:5px; background:#f9f9f9; border-radius:5px; }
 .hidden-tool-item button { padding:4px 12px; background:#4CAF50; color:white; border:none; border-radius:5px; font-size:12px; }
 </style>
 </head>
+
 <body>
 
 <!-- DEBUG TOGGLE -->
 <button class="debug-toggle" onclick="toggleDebug()">Toggle Debug</button>
 
 <!-- DEBUG CONSOLE -->
-<div class="debug-console" id="debugConsole" style="display:none;">
-    <h4>🔍 Debug Console</h4>
+<div class="debug-console" id="debugConsole">
+    <h4>Debug Console</h4>
     <div id="debugLog"></div>
 </div>
 
+<!-- DASHBOARD QUICK-LINK -->
+<a href="#" class="dashboard-btn" id="openDashboard">Dashboard</a>
+
+<!-- ====================== NEW LANDING PAGE ====================== -->
+<div class="container">
+
+    <header>
+        <div class="logo">
+            <img src="https://via.placeholder.com/180x48/0066ff/ffffff?text=GENEXIS+CLOUD" alt="Genexis Cloud Logo">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Solutions</a></li>
+                <li><a href="#">Documentation</a></li>
+                <li><a href="#">API</a></li>
+                <li><a href="#">Pricing</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+        <a href="#" class="cta-btn">Get Started</a>
+    </header>
+
+    <section class="hero">
+        <h1>Bioinformatics Solutions</h1>
+        <p>Harnessing Data for Discovery</p>
+        <div class="search-bar">
+            <input type="text" placeholder="Search Documentation">
+            <button>Submit</button>
+        </div>
+    </section>
+
+    <section class="solutions">
+        <h2>Our Solutions</h2>
+        <div class="grid">
+            <div class="card">
+                <img src="https://via.placeholder.com/400x180/4a90e2/ffffff?text=Genomic+Data+Analysis" alt="">
+                <div class="card-body">
+                    <h3>Genomic Data Analysis</h3>
+                    <p>Process, analyze, and visualize large-scale genomic datasets with ease.</p>
+                    <span class="badge">Active</span>
+                </div>
+            </div>
+            <div class="card">
+                <img src="https://via.placeholder.com/400x180/50c8ff/ffffff?text=RNA+Sequencing" alt="">
+                <div class="card-body">
+                    <h3>RNA Sequencing</h3>
+                    <p>From raw reads to differential expression – all in one platform.</p>
+                    <span class="badge">Active</span>
+                </div>
+            </div>
+            <div class="card">
+                <img src="https://via.placeholder.com/400x180/7ed321/ffffff?text=Unassembling" alt="">
+                <div class="card-body">
+                    <h3>Unassembling</h3>
+                    <p>De-novo assembly of complex genomes with unmatched speed.</p>
+                    <span class="badge">Coming Soon</span>
+                </div>
+            </div>
+            <div class="card">
+                <img src="https://via.placeholder.com/400x180/ff6b6b/ffffff?text=Protein+Cryo-EM" alt="">
+                <div class="card-body">
+                    <h3>Protein Cryo-EM</h3>
+                    <p>High-resolution structure determination from cryo-EM data.</p>
+                    <span class="badge">Active</span>
+                </div>
+            </div>
+            <div class="card">
+                <img src="https://via.placeholder.com/400x180/ffb800/ffffff?text=High+Scale" alt="">
+                <div class="card-body">
+                    <h3>High Scale</h3>
+                    <p>Process terabyte-scale datasets on cloud-native infrastructure.</p>
+                    <span class="badge">Active</span>
+                </div>
+            </div>
+            <div class="card">
+                <img src="https://via.placeholder.com/400x180/9b59b6/ffffff?text=Costly+Sets" alt="">
+                <div class="card-body">
+                    <h3>Costly Sets</h3>
+                    <p>Advanced statistical modeling for expensive experimental designs.</p>
+                    <span class="badge">Coming Soon</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="api-section">
+        <h2>API Documentation</h2>
+        <p>Integrate with Ease</p>
+        <div class="code-block">
+            <pre>
+curl -X POST https://api.genexis.cloud/v1/predict \
+  -H "Authorization: Bearer &lt;YOUR_TOKEN&gt;" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "sequence": "ATCG...",
+        "model": "protein_structure"
+      }'</pre>
+        </div>
+    </section>
+
+</div>
+
+<footer>
+    © 2025 Genexis Cloud. All rights reserved.
+</footer>
+
+<!-- ====================== ORIGINAL DASHBOARD (hidden) ====================== -->
+<div id="originalDashboard">
+
 <div class="header">
-    <h1>🌱 Plant Breeding Tools Dashboard</h1>
+    <h1>Plant Breeding Tools Dashboard</h1>
     <p>Manage your tools, favorites, hidden items, and quick links easily.</p>
     <div class="auth-status" id="authStatus">
         <div>Status: <span id="authStatusText">Initializing...</span></div>
@@ -165,13 +448,13 @@ a:hover { text-decoration:underline; }
             <button class="filter-btn" onclick="filterTools('active', event)">Active Only</button>
         </div>
         <div>
-            <button class="filter-btn" onclick="openSettings()">⚙️ Settings</button>
+            <button class="filter-btn" onclick="openSettings()">Settings</button>
         </div>
     </div>
 
     <!-- QUICK LINKS -->
     <div class="quick-links">
-        <h3>🔗 Quick Links</h3>
+        <h3>Quick Links</h3>
         <div class="links-list" id="linksList"></div>
         <div id="addLinkForm" class="add-link-form">
             <input type="text" id="linkName" placeholder="Link Name">
@@ -183,18 +466,18 @@ a:hover { text-decoration:underline; }
 
     <!-- FAVORITES -->
     <div id="favoritesSection" style="display:none;">
-        <h3>⭐ Favorites</h3>
+        <h3>Favorites</h3>
         <div class="tools-grid" id="favoritesGrid"></div>
     </div>
 
     <!-- ALL TOOLS -->
     <div>
-        <h3 style="margin-bottom: 15px;">🔧 All Tools</h3>
+        <h3 style="margin-bottom: 15px;">All Tools</h3>
         <div class="tools-grid" id="toolsGrid">
             <div class="tool-card" data-id="tool1" data-status="active">
                 <div class="tool-actions">
-                    <button class="tool-action-btn star" onclick="toggleFavorite(event,'tool1')">★</button>
-                    <button class="tool-action-btn hide" onclick="hideTool(event,'tool1')">×</button>
+                    <button class="tool-action-btn star" onclick="toggleFavorite(event,'tool1')">Star</button>
+                    <button class="tool-action-btn hide" onclick="hideTool(event,'tool1')">X</button>
                 </div>
                 <h3>Breeding Calculator</h3>
                 <p>Calculate cross predictions and genetic ratios for your breeding programs.</p>
@@ -202,8 +485,8 @@ a:hover { text-decoration:underline; }
             </div>
             <div class="tool-card" data-id="tool2" data-status="coming-soon">
                 <div class="tool-actions">
-                    <button class="tool-action-btn star" onclick="toggleFavorite(event,'tool2')">★</button>
-                    <button class="tool-action-btn hide" onclick="hideTool(event,'tool2')">×</button>
+                    <button class="tool-action-btn star" onclick="toggleFavorite(event,'tool2')">Star</button>
+                    <button class="tool-action-btn hide" onclick="hideTool(event,'tool2')">X</button>
                 </div>
                 <h3>Field Trial Manager</h3>
                 <p>Manage and analyze your field trial data with statistical tools.</p>
@@ -211,8 +494,8 @@ a:hover { text-decoration:underline; }
             </div>
             <div class="tool-card" data-id="tool3" data-status="active">
                 <div class="tool-actions">
-                    <button class="tool-action-btn star" onclick="toggleFavorite(event,'tool3')">★</button>
-                    <button class="tool-action-btn hide" onclick="hideTool(event,'tool3')">×</button>
+                    <button class="tool-action-btn star" onclick="toggleFavorite(event,'tool3')">Star</button>
+                    <button class="tool-action-btn hide" onclick="hideTool(event,'tool3')">X</button>
                 </div>
                 <h3>Germplasm Database</h3>
                 <p>Search and manage your germplasm collection with detailed records.</p>
@@ -220,8 +503,8 @@ a:hover { text-decoration:underline; }
             </div>
             <div class="tool-card" data-id="tool4" data-status="active">
                 <div class="tool-actions">
-                    <button class="tool-action-btn star" onclick="toggleFavorite(event,'tool4')">★</button>
-                    <button class="tool-action-btn hide" onclick="hideTool(event,'tool4')">×</button>
+                    <button class="tool-action-btn star" onclick="toggleFavorite(event,'tool4')">Star</button>
+                    <button class="tool-action-btn hide" onclick="hideTool(event,'tool4')">X</button>
                 </div>
                 <h3>Pedigree Visualizer</h3>
                 <p>Visualize breeding pedigrees and track lineage relationships.</p>
@@ -239,19 +522,19 @@ a:hover { text-decoration:underline; }
 <div class="modal" id="settingsModal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2>⚙️ Settings</h2>
-            <button class="close-btn" onclick="closeSettings()">×</button>
+            <h2>Settings</h2>
+            <button class="close-btn" onclick="closeSettings()">X</button>
         </div>
         <div class="settings-section">
             <h3 style="margin-bottom: 10px; text-align: left;">Data Management</h3>
-            <button onclick="resetFavorites()">🔄 Reset Favorites</button>
-            <button onclick="resetHidden()">👁️ Show All Hidden Tools</button>
-            <button onclick="resetAll()">⚠️ Reset Everything</button>
+            <button onclick="resetFavorites()">Reset Favorites</button>
+            <button onclick="resetHidden()">Show All Hidden Tools</button>
+            <button onclick="resetAll()">Reset Everything</button>
         </div>
         <div class="settings-section">
             <h3 style="margin-bottom: 10px; text-align: left;">Import/Export</h3>
-            <button onclick="exportSettings()">📤 Export Settings</button>
-            <button onclick="document.getElementById('importFile').click()">📥 Import Settings</button>
+            <button onclick="exportSettings()">Export Settings</button>
+            <button onclick="document.getElementById('importFile').click()">Import Settings</button>
             <input type="file" id="importFile" style="display:none;" accept=".json" onchange="importSettings(event)">
         </div>
         <div class="settings-section">
@@ -260,6 +543,8 @@ a:hover { text-decoration:underline; }
         </div>
     </div>
 </div>
+
+</div> <!-- end #originalDashboard -->
 
 <script>
 /* ------------------ DEBUG LOGGING ------------------ */
@@ -307,27 +592,21 @@ async function initAuth0() {
     const authError = document.getElementById('authError');
     
     try {
-        // Step 1: Check if window.auth0 exists
         debugLog('Checking for window.auth0...', 'info');
         if (typeof window.auth0 === 'undefined') {
             throw new Error('window.auth0 is undefined - CDN script may not have loaded');
         }
-        debugLog('✓ window.auth0 exists', 'success');
+        debugLog('window.auth0 exists', 'success');
         
-        // Step 2: Check if createAuth0Client exists
         debugLog('Checking for createAuth0Client...', 'info');
         if (typeof window.auth0.createAuth0Client !== 'function') {
             throw new Error('window.auth0.createAuth0Client is not a function');
         }
-        debugLog('✓ createAuth0Client is a function', 'success');
+        debugLog('createAuth0Client is a function', 'success');
         
-        // Step 3: Create Auth0 client
         debugLog('Creating Auth0 client...', 'info');
         
-        // Determine redirect URI - use the full current URL without query params
         let redirectUri = window.location.origin + window.location.pathname;
-        
-        // Ensure it ends with a slash
         if (!redirectUri.endsWith('/')) {
             redirectUri += '/';
         }
@@ -346,30 +625,27 @@ async function initAuth0() {
         debugLog('Config: ' + JSON.stringify(config, null, 2), 'info');
         
         auth0Client = await window.auth0.createAuth0Client(config);
-        debugLog('✓ Auth0 client created successfully', 'success');
+        debugLog('Auth0 client created successfully', 'success');
         
-        // Step 4: Enable login button
         loginBtn.disabled = false;
         loginBtn.textContent = 'Login';
         authStatusText.textContent = 'Ready';
         authStatusText.style.color = '#00ff00';
-        debugLog('✓ Login button enabled', 'success');
+        debugLog('Login button enabled', 'success');
         
-        // Step 5: Handle authentication callback
         debugLog('Checking for authentication callback...', 'info');
         await handleAuth();
         
     } catch(err) {
-        debugLog('❌ Auth0 initialization FAILED: ' + err.message, 'error');
+        debugLog('Auth0 initialization FAILED: ' + err.message, 'error');
         debugLog('Error stack: ' + err.stack, 'error');
         
-        authError.textContent = '❌ ' + err.message;
+        authError.textContent = '' + err.message;
         authStatusText.textContent = 'Failed';
         authStatusText.style.color = '#ff6b6b';
         loginBtn.disabled = true;
         loginBtn.textContent = 'Login Unavailable';
         
-        // Additional diagnostics
         debugLog('Window object keys containing "auth": ' + 
             Object.keys(window).filter(k => k.toLowerCase().includes('auth')).join(', '), 'info');
         debugLog('Document scripts: ' + 
@@ -382,7 +658,6 @@ async function handleAuth() {
         const urlParams = new URLSearchParams(window.location.search);
         debugLog('URL params: ' + window.location.search, 'info');
         
-        // Check if this is a redirect callback
         if (urlParams.has('code') && urlParams.has('state')) {
             debugLog('Detected OAuth callback, handling redirect...', 'info');
             
@@ -390,12 +665,10 @@ async function handleAuth() {
             debugLog('Redirect callback handled successfully', 'success');
             debugLog('Result: ' + JSON.stringify(result), 'info');
             
-            // Clean up URL
             window.history.replaceState({}, document.title, window.location.pathname);
             debugLog('URL cleaned', 'info');
         }
         
-        // Check authentication status
         debugLog('Checking if user is authenticated...', 'info');
         const isAuthenticated = await auth0Client.isAuthenticated();
         debugLog('Is authenticated: ' + isAuthenticated, isAuthenticated ? 'success' : 'info');
@@ -403,9 +676,9 @@ async function handleAuth() {
         await updateAuthUI(isAuthenticated);
         
     } catch(err) {
-        debugLog('❌ Error handling auth: ' + err.message, 'error');
+        debugLog('Error handling auth: ' + err.message, 'error');
         debugLog('Error stack: ' + err.stack, 'error');
-        document.getElementById('authError').textContent = '⚠️ ' + err.message;
+        document.getElementById('authError').textContent = '' + err.message;
     }
 }
 
@@ -424,7 +697,7 @@ async function updateAuthUI(isAuthenticated = false) {
         currentUser = await auth0Client.getUser();
         debugLog('Current user: ' + JSON.stringify(currentUser), 'success');
         
-        userProfile.textContent = `👤 ${currentUser.name || currentUser.email}`;
+        userProfile.textContent = `${currentUser.name || currentUser.email}`;
         authStatusText.textContent = 'Authenticated';
         authStatusText.style.color = '#00ff00';
         
@@ -443,7 +716,7 @@ async function login() {
     debugLog('Login button clicked', 'info');
     
     if (!auth0Client) {
-        debugLog('❌ Cannot login: auth0Client is null', 'error');
+        debugLog('Cannot login: auth0Client is null', 'error');
         alert('Auth0 is not initialized yet. Please check the debug console.');
         return;
     }
@@ -451,7 +724,6 @@ async function login() {
     try {
         debugLog('Starting login redirect...', 'info');
         
-        // Use the same redirect URI as initialization
         let redirectUri = window.location.origin + window.location.pathname;
         if (!redirectUri.endsWith('/')) {
             redirectUri += '/';
@@ -467,7 +739,7 @@ async function login() {
         
         debugLog('Login redirect initiated (you should be redirected now)', 'success');
     } catch(err) {
-        debugLog('❌ Login failed: ' + err.message, 'error');
+        debugLog('Login failed: ' + err.message, 'error');
         debugLog('Error stack: ' + err.stack, 'error');
         alert('Login failed: ' + err.message);
     }
@@ -477,7 +749,7 @@ async function logout() {
     debugLog('Logout initiated', 'info');
     
     if (!auth0Client) {
-        debugLog('❌ Cannot logout: auth0Client is null', 'error');
+        debugLog('Cannot logout: auth0Client is null', 'error');
         return;
     }
     
@@ -493,7 +765,6 @@ async function logout() {
         localStorage.clear();
         debugLog('Local storage cleared', 'info');
         
-        // Use the same redirect URI
         let returnTo = window.location.origin + window.location.pathname;
         if (!returnTo.endsWith('/')) {
             returnTo += '/';
@@ -509,7 +780,7 @@ async function logout() {
         
         debugLog('Logout completed', 'success');
     } catch(err) {
-        debugLog('❌ Logout error: ' + err.message, 'error');
+        debugLog('Logout error: ' + err.message, 'error');
     }
 }
 
@@ -527,7 +798,7 @@ function loadUserSettings() {
             quickLinks = data.quickLinks || [];
             debugLog(`Loaded ${favorites.length} favorites, ${hiddenTools.length} hidden tools, ${quickLinks.length} quick links`, 'success');
         } catch(err) {
-            debugLog('❌ Error parsing saved settings: ' + err.message, 'error');
+            debugLog('Error parsing saved settings: ' + err.message, 'error');
         }
     } else {
         debugLog('No saved settings found', 'info');
@@ -665,7 +936,7 @@ function renderQuickLinks() {
     list.innerHTML = quickLinks.map((link, i) => `
         <div class="quick-link-item">
             <a href="${link.url}" target="_blank" rel="noopener">${link.name}</a>
-            <button onclick="removeQuickLink(${i})">×</button>
+            <button onclick="removeQuickLink(${i})">X</button>
         </div>
     `).join('');
 }
@@ -810,12 +1081,21 @@ function importSettings(event) {
             
             alert('Settings imported successfully!');
         } catch (err) {
-            debugLog('❌ Failed to import settings: ' + err.message, 'error');
+            debugLog('Failed to import settings: ' + err.message, 'error');
             alert('Failed to import settings: ' + err.message);
         }
     };
     reader.readAsText(file);
 }
+
+/* ------------------ DASHBOARD TOGGLE ------------------ */
+document.getElementById('openDashboard').addEventListener('click', e=>{
+    e.preventDefault();
+    document.querySelector('.container').style.display='none';
+    document.getElementById('originalDashboard').style.display='block';
+    // re-init Auth0 if needed
+    if (typeof initAuth0 === 'function') initAuth0();
+});
 
 /* ------------------ INITIALIZATION ------------------ */
 window.addEventListener('DOMContentLoaded', async () => {
@@ -824,36 +1104,30 @@ window.addEventListener('DOMContentLoaded', async () => {
     debugLog('Current URL: ' + window.location.href, 'info');
     debugLog('User Agent: ' + navigator.userAgent, 'info');
     
-    // Check for Auth0 script
-    debugLog('Checking for Auth0 script tag...', 'info');
     const auth0Script = Array.from(document.scripts).find(s => s.src.includes('auth0'));
     if (auth0Script) {
-        debugLog('✓ Auth0 script tag found: ' + auth0Script.src, 'success');
+        debugLog('Auth0 script tag found: ' + auth0Script.src, 'success');
     } else {
-        debugLog('❌ Auth0 script tag NOT found', 'error');
+        debugLog('Auth0 script tag NOT found', 'error');
     }
     
-    // Wait a moment for scripts to load
-    debugLog('Waiting 500ms for scripts to load...', 'info');
     await new Promise(resolve => setTimeout(resolve, 500));
-    
-    // Initialize Auth0
     await initAuth0();
     
     debugLog('=== INITIALIZATION COMPLETE ===', 'success');
 });
 
-// Log any uncaught errors
 window.addEventListener('error', (event) => {
-    debugLog('❌ Uncaught error: ' + event.message, 'error');
+    debugLog('Uncaught error: ' + event.message, 'error');
     debugLog('Error at: ' + event.filename + ':' + event.lineno + ':' + event.colno, 'error');
 });
 
 window.addEventListener('unhandledrejection', (event) => {
-    debugLog('❌ Unhandled promise rejection: ' + event.reason, 'error');
+    debugLog('Unhandled promise rejection: ' + event.reason, 'error');
 });
 
 debugLog('Script loaded and event listeners registered', 'success');
 </script>
+
 </body>
 </html>
