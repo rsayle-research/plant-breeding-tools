@@ -8,6 +8,41 @@
     
     <script src="https://cdn.auth0.com/js/auth0-spa-js/2.1/auth0-spa-js.production.js"></script>
     <script src="./js/auth.js"></script>
+    
+    <!-- Firebase SDK v9+ Modular - loaded as ES modules -->
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyAJ7qb1-Nfq5Qtz6LGhWIumAVIW32jZdj4",
+          authDomain: "genexis-cloud-user-storage.firebaseapp.com",
+          projectId: "genexis-cloud-user-storage",
+          storageBucket: "genexis-cloud-user-storage.firebasestorage.app",
+          messagingSenderId: "478021509775",
+          appId: "1:478021509775:web:71d8e4d86f031bae7c06fa"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        console.log('Firebase initialized for Genexis Cloud');
+
+        // Make Firebase available globally
+        window.firebaseDB = db;
+        window.firebaseModules = {
+          doc,
+          getDoc,
+          setDoc,
+          serverTimestamp
+        };
+
+        // Dispatch event to let dashboard know Firebase is ready
+        window.dispatchEvent(new CustomEvent('firebaseReady'));
+    </script>
 
     <style>
         :root {
@@ -483,15 +518,69 @@
     <script>
         const DEFAULT_PROFILE_PIC = 'https://placehold.co/40x40/95a5a6/ffffff?text=U';
 
-        // Quick Links Management
+        // Quick Links Management with Firebase
         let quickLinks = [];
+        let userEmail = null;
 
-        function loadQuickLinks() {
-            const saved = localStorage.getItem('genexisQuickLinks');
-            if (saved) {
-                quickLinks = JSON.parse(saved);
-            } else {
-                // Default links
+        // Wait for Firebase to be initialized
+        let firebaseReady = false;
+        window.addEventListener('firebaseReady', () => {
+            firebaseReady = true;
+            console.log('Firebase is ready');
+        });
+
+        async function waitForFirebase() {
+            if (firebaseReady) return;
+            
+            return new Promise((resolve) => {
+                const checkInterval = setInterval(() => {
+                    if (firebaseReady) {
+                        clearInterval(checkInterval);
+                        resolve();
+                    }
+                }, 50);
+                
+                // Timeout after 5 seconds
+                setTimeout(() => {
+                    clearInterval(checkInterval);
+                    console.error('Firebase initialization timeout');
+                    resolve();
+                }, 5000);
+            });
+        }
+
+        async function loadQuickLinks() {
+            try {
+                await waitForFirebase();
+                
+                if (!window.firebaseDB) {
+                    throw new Error('Firebase not initialized');
+                }
+
+                const { doc, getDoc } = window.firebaseModules;
+                const db = window.firebaseDB;
+
+                // Get user's quick links from Firestore
+                const docRef = doc(db, 'users', userEmail, 'settings', 'quicklinks');
+                const docSnap = await getDoc(docRef);
+                
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    quickLinks = data.links || [];
+                    console.log('Quick links loaded from Firebase:', quickLinks.length, 'links');
+                } else {
+                    // Default links for new users
+                    console.log('No existing quick links, creating defaults');
+                    quickLinks = [
+                        { name: 'Example Report', url: 'https://example.com/report' },
+                        { name: 'Data Portal', url: 'https://example.com/data' }
+                    ];
+                    // Save default links to Firebase
+                    await saveQuickLinksToStorage();
+                }
+            } catch (error) {
+                console.error('Error loading quick links from Firebase:', error);
+                // Fallback to default links
                 quickLinks = [
                     { name: 'Example Report', url: 'https://example.com/report' },
                     { name: 'Data Portal', url: 'https://example.com/data' }
@@ -500,8 +589,27 @@
             renderQuickLinks();
         }
 
-        function saveQuickLinksToStorage() {
-            localStorage.setItem('genexisQuickLinks', JSON.stringify(quickLinks));
+        async function saveQuickLinksToStorage() {
+            try {
+                await waitForFirebase();
+                
+                if (!window.firebaseDB) {
+                    throw new Error('Firebase not initialized');
+                }
+
+                const { doc, setDoc, serverTimestamp } = window.firebaseModules;
+                const db = window.firebaseDB;
+
+                const docRef = doc(db, 'users', userEmail, 'settings', 'quicklinks');
+                await setDoc(docRef, {
+                    links: quickLinks,
+                    updatedAt: serverTimestamp()
+                });
+                console.log('Quick links saved to Firebase successfully');
+            } catch (error) {
+                console.error('Failed to save quick links to Firebase:', error);
+                alert('Failed to save quick links. Please check your connection and try again.');
+            }
         }
 
         function renderQuickLinks() {
@@ -550,7 +658,7 @@
             }
 
             quickLinks.push({ name, url });
-            saveQuickLinksToStorage();
+            saveQuickLinksToStorage(); // Now async but we don't need to await in UI
             renderQuickLinks();
             closeAddLinkModal();
         }
@@ -561,7 +669,7 @@
             
             if (confirm('Are you sure you want to delete this quick link?')) {
                 quickLinks.splice(index, 1);
-                saveQuickLinksToStorage();
+                saveQuickLinksToStorage(); // Now async but we don't need to await in UI
                 renderQuickLinks();
             }
         }
@@ -614,8 +722,11 @@
                 const user = await getUser();
 
                 if (user) {
+                    // Store user email for storage operations
+                    userEmail = user.email || user.sub; // Fallback to user ID if no email
+                    
                     renderUserProfile(user);
-                    loadQuickLinks(); // Load quick links after authentication
+                    await loadQuickLinks(); // Load quick links from account storage
                     header.style.display = 'flex'; 
                     main.style.display = 'block'; 
                 } else {
