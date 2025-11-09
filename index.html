@@ -1,923 +1,832 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plant Breeding Tools Dashboard</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 30px;
-        }
-        
-        .header h1 {
-            font-size: 36px;
-            margin-bottom: 10px;
-        }
-        
-        .header p {
-            font-size: 16px;
-            opacity: 0.9;
-        }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        
-        .controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        
-        .control-group {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            background: rgba(255,255,255,0.2);
-            color: white;
-            backdrop-filter: blur(10px);
-        }
-        
-        .btn:hover {
-            background: rgba(255,255,255,0.3);
-            transform: translateY(-2px);
-        }
-        
-        .btn-primary {
-            background: #4CAF50;
-        }
-        
-        .btn-primary:hover {
-            background: #45a049;
-        }
-        
-        .filter-btn {
-            padding: 8px 16px;
-            font-size: 13px;
-        }
-        
-        .filter-btn.active {
-            background: rgba(255,255,255,0.4);
-            font-weight: bold;
-        }
-        
-        .quick-links {
-            background: rgba(255,255,255,0.15);
-            backdrop-filter: blur(10px);
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 30px;
-            color: white;
-        }
-        
-        .quick-links h3 {
-            margin-bottom: 15px;
-            font-size: 18px;
-        }
-        
-        .links-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        
-        .quick-link-item {
-            background: rgba(255,255,255,0.2);
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .quick-link-item a {
-            color: white;
-            text-decoration: none;
-        }
-        
-        .quick-link-item a:hover {
-            text-decoration: underline;
-        }
-        
-        .quick-link-item button {
-            background: rgba(255,255,255,0.3);
-            border: none;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 11px;
-        }
-        
-        .add-link-form {
-            display: none;
-            margin-top: 15px;
-            gap: 10px;
-        }
-        
-        .add-link-form.active {
-            display: flex;
-        }
-        
-        .add-link-form input {
-            flex: 1;
-            padding: 8px 12px;
-            border: none;
-            border-radius: 5px;
-            font-size: 13px;
-        }
-        
-        .section-header {
-            color: white;
-            margin-bottom: 15px;
-            font-size: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .tools-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
-        
-        .tool-card {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            transition: transform 0.3s, box-shadow 0.3s;
-            cursor: pointer;
-            position: relative;
-        }
-        
-        .tool-card.hidden {
-            display: none;
-        }
-        
-        .tool-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
-        }
-        
-        .tool-card.favorited {
-            border: 2px solid #FFD700;
-        }
-        
-        .tool-actions {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            display: flex;
-            gap: 5px;
-        }
-        
-        .tool-action-btn {
-            width: 32px;
-            height: 32px;
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-            background: #f0f0f0;
-        }
-        
-        .tool-action-btn:hover {
-            transform: scale(1.1);
-            background: #e0e0e0;
-        }
-        
-        .tool-action-btn.star {
-            background: #fff;
-        }
-        
-        .tool-action-btn.star.active {
-            background: #FFD700;
-        }
-        
-        .tool-action-btn.hide {
-            background: #fff;
-        }
-        
-        .tool-icon {
-            font-size: 48px;
-            margin-bottom: 15px;
-        }
-        
-        .tool-card h3 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 20px;
-        }
-        
-        .tool-card p {
-            color: #666;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-        
-        .tool-card .status {
-            display: inline-block;
-            margin-top: 15px;
-            padding: 5px 12px;
-            background: #4CAF50;
-            color: white;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        
-        .status.coming-soon {
-            background: #FF9800;
-        }
-        
-        .footer {
-            text-align: center;
-            color: white;
-            margin-top: 40px;
-            opacity: 0.8;
-            font-size: 14px;
-        }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .modal.active {
-            display: flex;
-        }
-        
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            max-width: 500px;
-            width: 90%;
-            text-align: center;
-        }
-        
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .modal-header h2 {
-            color: #333;
-            font-size: 24px;
-        }
-        
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 28px;
-            cursor: pointer;
-            color: #999;
-        }
-        
-        .settings-section {
-            margin-bottom: 20px;
-        }
-        
-        .settings-section h3 {
-            color: #555;
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
-        
-        .settings-section button {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 10px;
-            border: 1px solid #ddd;
-            background: white;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s;
-        }
-        
-        .settings-section button:hover {
-            background: #f5f5f5;
-            border-color: #4CAF50;
-        }
-        
-        .hidden-tools-list {
-            max-height: 200px;
-            overflow-y: auto;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 10px;
-        }
-        
-        .hidden-tool-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px;
-            margin-bottom: 5px;
-            background: #f9f9f9;
-            border-radius: 5px;
-        }
-        
-        .hidden-tool-item button {
-            padding: 4px 12px;
-            background: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 12px;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plant Breeding Tools Dashboard</title>
+<!-- Auth0 SPA JS -->
+<script src="https://cdn.auth0.com/js/auth0-spa-js/2.1/auth0-spa-js.production.js"></script>
+<style>
+/* ------------------ RESET & GLOBAL ------------------ */
+* { margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+body { min-height:100vh; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color:#fff; padding:20px; }
+button { cursor:pointer; transition:0.2s; }
+a { color:inherit; text-decoration:none; }
+a:hover { text-decoration:underline; }
 
-        #qrcodeContainer {
-            padding: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            min-height: 256px;
-        }
+/* ------------------ DEBUG CONSOLE ------------------ */
+.debug-console { 
+    position: fixed; 
+    bottom: 20px; 
+    right: 20px; 
+    width: 400px;
+    max-height: 400px;
+    background: rgba(0, 0, 0, 0.95);
+    border: 2px solid #00ff00;
+    border-radius: 8px;
+    padding: 15px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    overflow-y: auto;
+    z-index: 10000;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+.debug-console h4 {
+    color: #00ff00;
+    margin-bottom: 10px;
+    font-size: 14px;
+    border-bottom: 1px solid #00ff00;
+    padding-bottom: 5px;
+}
+.debug-line {
+    margin: 5px 0;
+    padding: 3px 5px;
+    border-radius: 3px;
+}
+.debug-line.info { color: #00bfff; }
+.debug-line.success { color: #00ff00; background: rgba(0, 255, 0, 0.1); }
+.debug-line.error { color: #ff4444; background: rgba(255, 0, 0, 0.1); }
+.debug-line.warning { color: #ffaa00; background: rgba(255, 170, 0, 0.1); }
+.debug-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 15px;
+    background: rgba(0, 255, 0, 0.2);
+    border: 2px solid #00ff00;
+    border-radius: 5px;
+    color: #00ff00;
+    font-weight: bold;
+    z-index: 9999;
+}
 
-        #qrcodeContainer canvas {
-            display: block;
-        }
-    </style>
-    <script src="https://cdn.auth0.com/js/auth0-spa-js/1.30/auth0-spa-js.production.js"></script>
+/* ------------------ HEADER ------------------ */
+.header { text-align:center; margin-bottom:30px; }
+.header h1 { font-size:2.5rem; margin-bottom:0.3rem; }
+.header p { font-size:1rem; opacity:0.85; }
+.auth-status { 
+    margin-top: 10px; 
+    padding: 10px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 8px;
+    font-size: 14px;
+}
+.auth-controls { margin-top:10px; display:flex; justify-content:center; gap:10px; flex-wrap:wrap; align-items:center; }
+.auth-controls button { padding:8px 16px; border:none; border-radius:8px; font-weight:600; backdrop-filter:blur(5px); background:rgba(255,255,255,0.2); color:#fff; }
+.auth-controls button:hover { background:rgba(255,255,255,0.35); }
+.auth-controls button:disabled { opacity:0.5; cursor:not-allowed; }
+
+/* ------------------ CONTAINER ------------------ */
+.container { max-width:1400px; margin:0 auto; }
+.controls { display:flex; justify-content:space-between; align-items:center; margin-bottom:25px; flex-wrap:wrap; gap:10px; }
+.filter-btn { padding:8px 16px; font-size:13px; border:none; border-radius:8px; background:rgba(255,255,255,0.2); color:#fff; }
+.filter-btn.active { background:rgba(255,255,255,0.4); font-weight:bold; }
+.filter-btn:hover { background:rgba(255,255,255,0.35); }
+
+/* ------------------ QUICK LINKS ------------------ */
+.quick-links { backdrop-filter:blur(10px); background:rgba(255,255,255,0.15); padding:20px; border-radius:12px; margin-bottom:30px; }
+.quick-links h3 { margin-bottom:15px; font-size:1.1rem; }
+.links-list { display:flex; flex-wrap:wrap; gap:10px; }
+.quick-link-item { display:flex; align-items:center; gap:8px; padding:8px 15px; border-radius:20px; background:rgba(255,255,255,0.2); font-size:13px; }
+.quick-link-item button { background:rgba(255,255,255,0.3); border:none; border-radius:10px; padding:2px 8px; font-size:11px; color:#fff; }
+.add-link-form { display:flex; gap:10px; margin-top:10px; flex-wrap:wrap; display:none; }
+.add-link-form.active { display:flex; }
+.add-link-form input { flex:1; padding:8px 12px; border-radius:6px; border:none; font-size:13px; }
+
+/* ------------------ TOOL CARDS ------------------ */
+.tools-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); gap:25px; margin-bottom:40px; }
+.tool-card { background:#fff; color:#333; border-radius:12px; padding:25px; box-shadow:0 8px 25px rgba(0,0,0,0.2); transition:0.3s; position:relative; cursor:pointer; }
+.tool-card:hover { transform:translateY(-5px); box-shadow:0 12px 35px rgba(0,0,0,0.3); }
+.tool-card h3 { margin-bottom:8px; font-size:1.2rem; }
+.tool-card p { font-size:0.85rem; color:#666; line-height:1.4; }
+.tool-card .status { margin-top:12px; display:inline-block; padding:5px 12px; border-radius:20px; font-size:12px; font-weight:bold; color:#fff; background:#4CAF50; }
+.status.coming-soon { background:#FF9800; }
+.tool-actions { position:absolute; top:10px; right:10px; display:flex; gap:5px; }
+.tool-action-btn { width:32px; height:32px; border-radius:50%; border:none; display:flex; justify-content:center; align-items:center; font-size:16px; background:rgba(0,0,0,0.1); }
+.tool-action-btn:hover { background:rgba(0,0,0,0.2); }
+.tool-action-btn.star.active { background:#FFD700; }
+.tool-card.hidden { display:none; }
+
+/* ------------------ FAVORITES ------------------ */
+#favoritesSection { margin-bottom:30px; }
+#favoritesSection h3 { margin-bottom:15px; font-size:1.2rem; }
+
+/* ------------------ FOOTER ------------------ */
+.footer { text-align:center; margin-top:40px; font-size:14px; opacity:0.75; }
+
+/* ------------------ MODALS ------------------ */
+.modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); justify-content:center; align-items:center; z-index:1000; }
+.modal.active { display:flex; }
+.modal-content { background:#fff; color:#333; padding:30px; border-radius:15px; max-width:500px; width:90%; text-align:center; position:relative; }
+.modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+.modal-header h2 { font-size:1.5rem; }
+.close-btn { background:none; border:none; font-size:28px; cursor:pointer; color:#999; }
+.settings-section { margin-bottom: 20px; }
+.settings-section button { width:100%; padding:12px; margin-bottom:10px; border:1px solid #ddd; border-radius:8px; background:#fff; transition:0.2s; }
+.settings-section button:hover { background:#f5f5f5; border-color:#4CAF50; }
+
+/* ------------------ HIDDEN TOOLS LIST ------------------ */
+.hidden-tools-list { max-height:200px; overflow-y:auto; border:1px solid #ddd; border-radius:8px; padding:10px; }
+.hidden-tool-item { display:flex; justify-content:space-between; align-items:center; padding:8px; margin-bottom:5px; background:#f9f9f9; border-radius:5px; }
+.hidden-tool-item button { padding:4px 12px; background:#4CAF50; color:white; border:none; border-radius:5px; font-size:12px; }
+</style>
 </head>
 <body>
-    <div class="header">
-        <h1>🌱 Plant Breeding Tools Dashboard</h1>
-        <p>Your personalized collection of experiment management tools</p>
+
+<!-- DEBUG TOGGLE -->
+<button class="debug-toggle" onclick="toggleDebug()">Toggle Debug</button>
+
+<!-- DEBUG CONSOLE -->
+<div class="debug-console" id="debugConsole" style="display:none;">
+    <h4>🔍 Debug Console</h4>
+    <div id="debugLog"></div>
+</div>
+
+<div class="header">
+    <h1>🌱 Plant Breeding Tools Dashboard</h1>
+    <p>Manage your tools, favorites, hidden items, and quick links easily.</p>
+    <div class="auth-status" id="authStatus">
+        <div>Status: <span id="authStatusText">Initializing...</span></div>
+        <div id="authError" style="color: #ff6b6b; margin-top: 5px;"></div>
     </div>
-    
-    <div class="container">
-        <div class="controls">
-            <div class="control-group">
-                <button id="loginBtn" class="btn btn-primary">Log In</button>
-                <button id="logoutBtn" class="btn" style="display:none;">Log Out</button>
-                <span id="userProfile" style="color:white; margin-left:10px; font-weight:600;"></span>
-                <button class="btn filter-btn active" onclick="filterTools('all')">All Tools</button>
-                <button class="btn filter-btn" onclick="filterTools('favorites')">⭐ Favorites</button>
-                <button class="btn filter-btn" onclick="filterTools('active')">Active</button>
-            </div>
-            <div class="control-group">
-                <button class="btn" onclick="openSettings()">⚙️ Settings</button>
-                <button class="btn" onclick="generateQrCode()">📱 QR Config</button>
-                <button class="btn btn-primary" onclick="exportSettings()">💾 Export Settings</button>
-                <button class="btn" onclick="document.getElementById('importFile').click()">📂 Import Settings</button>
-                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importSettings(event)">
-            </div>
+    <div class="auth-controls">
+        <span id="userProfile"></span>
+        <button id="loginBtn" onclick="login()" disabled>Loading Auth0...</button>
+        <button id="logoutBtn" onclick="logout()" style="display:none;">Logout</button>
+    </div>
+</div>
+
+<div class="container">
+    <!-- FILTER CONTROLS -->
+    <div class="controls">
+        <div>
+            <button class="filter-btn active" onclick="filterTools('all', event)">All Tools</button>
+            <button class="filter-btn" onclick="filterTools('favorites', event)">Favorites</button>
+            <button class="filter-btn" onclick="filterTools('active', event)">Active Only</button>
         </div>
-        
-        <div class="quick-links">
-            <h3>📌 Quick Links</h3>
-            <div class="links-list" id="linksList"></div>
-            <div class="add-link-form" id="addLinkForm">
-                <input type="text" id="linkName" placeholder="Link name">
-                <input type="url" id="linkUrl" placeholder="https://...">
-                <button class="btn btn-primary" onclick="addQuickLink()">Add</button>
-                <button class="btn" onclick="toggleAddLinkForm()">Cancel</button>
-            </div>
-            <button class="btn" onclick="toggleAddLinkForm()" style="margin-top: 10px;">+ Add Link</button>
+        <div>
+            <button class="filter-btn" onclick="openSettings()">⚙️ Settings</button>
         </div>
-        
-        <div id="favoritesSection" style="display: none;">
-            <h2 class="section-header">⭐ Favorite Tools</h2>
-            <div class="tools-grid" id="favoritesGrid"></div>
+    </div>
+
+    <!-- QUICK LINKS -->
+    <div class="quick-links">
+        <h3>🔗 Quick Links</h3>
+        <div class="links-list" id="linksList"></div>
+        <div id="addLinkForm" class="add-link-form">
+            <input type="text" id="linkName" placeholder="Link Name">
+            <input type="url" id="linkUrl" placeholder="Link URL">
+            <button onclick="addQuickLink()">Add</button>
         </div>
-        
-        <h2 class="section-header">🛠️ All Tools</h2>
+        <button onclick="toggleAddLinkForm()" class="filter-btn">+ Add Quick Link</button>
+    </div>
+
+    <!-- FAVORITES -->
+    <div id="favoritesSection" style="display:none;">
+        <h3>⭐ Favorites</h3>
+        <div class="tools-grid" id="favoritesGrid"></div>
+    </div>
+
+    <!-- ALL TOOLS -->
+    <div>
+        <h3 style="margin-bottom: 15px;">🔧 All Tools</h3>
         <div class="tools-grid" id="toolsGrid">
-            <div class="tool-card" data-id="experiment-generator" data-status="active">
+            <div class="tool-card" data-id="tool1" data-status="active">
                 <div class="tool-actions">
-                    <button class="tool-action-btn star" onclick="toggleFavorite(event, 'experiment-generator')">⭐</button>
-                    <button class="tool-action-btn hide" onclick="hideTool(event, 'experiment-generator')">👁️</button>
+                    <button class="tool-action-btn star" onclick="toggleFavorite(event,'tool1')">★</button>
+                    <button class="tool-action-btn hide" onclick="hideTool(event,'tool1')">×</button>
                 </div>
-                <div onclick="window.location.href='experiment-generator.html'">
-                    <div class="tool-icon">📊</div>
-                    <h3>Experiment File Generator</h3>
-                    <p>Quickly create standardized CSV/Excel templates for new experiments with pre-configured columns and automatic numbering.</p>
-                    <span class="status">Active</span>
-                </div>
+                <h3>Breeding Calculator</h3>
+                <p>Calculate cross predictions and genetic ratios for your breeding programs.</p>
+                <span class="status">Active</span>
             </div>
-            
-            <div class="tool-card" data-id="field-data-sync" data-status="active">
+            <div class="tool-card" data-id="tool2" data-status="coming-soon">
                 <div class="tool-actions">
-                    <button class="tool-action-btn star" onclick="toggleFavorite(event, 'field-data-sync')">⭐</button>
-                    <button class="tool-action-btn hide" onclick="hideTool(event, 'field-data-sync')">👁️</button>
+                    <button class="tool-action-btn star" onclick="toggleFavorite(event,'tool2')">★</button>
+                    <button class="tool-action-btn hide" onclick="hideTool(event,'tool2')">×</button>
                 </div>
-                <div onclick="window.open('https://field-data-file-share.vercel.app/', '_blank')">
-                    <div class="tool-icon">☁️</div>
-                    <h3>Field Data Sync</h3>
-                    <p>Share and sync field data files between devices. Perfect for transferring observation data from mobile to desktop.</p>
-                    <span class="status">Active</span>
-                </div>
+                <h3>Field Trial Manager</h3>
+                <p>Manage and analyze your field trial data with statistical tools.</p>
+                <span class="status coming-soon">Coming Soon</span>
             </div>
-            
-            <div class="tool-card" data-id="data-cleaner" data-status="coming-soon">
+            <div class="tool-card" data-id="tool3" data-status="active">
                 <div class="tool-actions">
-                    <button class="tool-action-btn star" onclick="toggleFavorite(event, 'data-cleaner')">⭐</button>
-                    <button class="tool-action-btn hide" onclick="hideTool(event, 'data-cleaner')">👁️</button>
+                    <button class="tool-action-btn star" onclick="toggleFavorite(event,'tool3')">★</button>
+                    <button class="tool-action-btn hide" onclick="hideTool(event,'tool3')">×</button>
                 </div>
-                <div>
-                    <div class="tool-icon">📋</div>
-                    <h3>Phenotype Data Cleaner</h3>
-                    <p>Validate and clean phenotype data files with automatic outlier detection and quality checks.</p>
-                    <span class="status coming-soon">Coming Soon</span>
-                </div>
+                <h3>Germplasm Database</h3>
+                <p>Search and manage your germplasm collection with detailed records.</p>
+                <span class="status">Active</span>
             </div>
-            
-            <div class="tool-card" data-id="seed-labels" data-status="active">
+            <div class="tool-card" data-id="tool4" data-status="active">
                 <div class="tool-actions">
-                    <button class="tool-action-btn star" onclick="toggleFavorite(event, 'seed-labels')">⭐</button>
-                    <button class="tool-action-btn hide" onclick="hideTool(event, 'seed-labels')">👁️</button>
+                    <button class="tool-action-btn star" onclick="toggleFavorite(event,'tool4')">★</button>
+                    <button class="tool-action-btn hide" onclick="hideTool(event,'tool4')">×</button>
                 </div>
-                <div onclick="window.location.href='seed-labels.html'">
-                    <div class="tool-icon">🏷️</div>
-                    <h3>Seed Label Generator</h3>
-                    <p>Create printable labels for seed packets with variety information, generation data, and collection dates.</p>
-                    <span class="status">Active</span>
-                </div>
-            </div>
-            
-            <div class="tool-card" data-id="field-randomizer" data-status="coming-soon">
-                <div class="tool-actions">
-                    <button class="tool-action-btn star" onclick="toggleFavorite(event, 'field-randomizer')">⭐</button>
-                    <button class="tool-action-btn hide" onclick="hideTool(event, 'field-randomizer')">👁️</button>
-                </div>
-                <div>
-                    <div class="tool-icon">📈</div>
-                    <h3>Field Trial Randomizer</h3>
-                    <p>Generate randomized field layouts for your breeding trials with blocking and replication support.</p>
-                    <span class="status coming-soon">Coming Soon</span>
-                </div>
-            </div>
-            
-            <div class="tool-card" data-id="pedigree-tracker" data-status="coming-soon">
-                <div class="tool-actions">
-                    <button class="tool-action-btn star" onclick="toggleFavorite(event, 'pedigree-tracker')">⭐</button>
-                    <button class="tool-action-btn hide" onclick="hideTool(event, 'pedigree-tracker')">👁️</button>
-                </div>
-                <div>
-                    <div class="tool-icon">🧬</div>
-                    <h3>Pedigree Tracker</h3>
-                    <p>Visualize and manage crossing histories and pedigree relationships for your breeding lines.</p>
-                    <span class="status coming-soon">Coming Soon</span>
-                </div>
+                <h3>Pedigree Visualizer</h3>
+                <p>Visualize breeding pedigrees and track lineage relationships.</p>
+                <span class="status">Active</span>
             </div>
         </div>
+    </div>
+</div>
+
+<div class="footer">
+    &copy; 2025 Plant Breeding Dashboard. All rights reserved.
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal" id="settingsModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>⚙️ Settings</h2>
+            <button class="close-btn" onclick="closeSettings()">×</button>
+        </div>
+        <div class="settings-section">
+            <h3 style="margin-bottom: 10px; text-align: left;">Data Management</h3>
+            <button onclick="resetFavorites()">🔄 Reset Favorites</button>
+            <button onclick="resetHidden()">👁️ Show All Hidden Tools</button>
+            <button onclick="resetAll()">⚠️ Reset Everything</button>
+        </div>
+        <div class="settings-section">
+            <h3 style="margin-bottom: 10px; text-align: left;">Import/Export</h3>
+            <button onclick="exportSettings()">📤 Export Settings</button>
+            <button onclick="document.getElementById('importFile').click()">📥 Import Settings</button>
+            <input type="file" id="importFile" style="display:none;" accept=".json" onchange="importSettings(event)">
+        </div>
+        <div class="settings-section">
+            <h3 style="margin-bottom: 10px; text-align: left;">Hidden Tools</h3>
+            <div class="hidden-tools-list" id="hiddenToolsList"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+/* ------------------ DEBUG LOGGING ------------------ */
+let debugMessages = [];
+let debugConsoleVisible = false;
+
+function debugLog(message, type = 'info') {
+    const timestamp = new Date().toLocaleTimeString();
+    const logEntry = { timestamp, message, type };
+    debugMessages.push(logEntry);
+    
+    console.log(`[${type.toUpperCase()}] ${timestamp}: ${message}`);
+    
+    updateDebugConsole();
+}
+
+function updateDebugConsole() {
+    const debugLog = document.getElementById('debugLog');
+    if (!debugLog) return;
+    
+    debugLog.innerHTML = debugMessages.slice(-50).reverse().map(entry => 
+        `<div class="debug-line ${entry.type}">[${entry.timestamp}] ${entry.message}</div>`
+    ).join('');
+}
+
+function toggleDebug() {
+    debugConsoleVisible = !debugConsoleVisible;
+    document.getElementById('debugConsole').style.display = debugConsoleVisible ? 'block' : 'none';
+}
+
+/* ------------------ GLOBAL STATE ------------------ */
+let auth0Client = null;
+let currentUser = null;
+let favorites = [];
+let hiddenTools = [];
+let quickLinks = [];
+let currentFilter = 'all';
+
+/* ------------------ AUTH0 INITIALIZATION ------------------ */
+async function initAuth0() {
+    debugLog('Starting Auth0 initialization...', 'info');
+    
+    const loginBtn = document.getElementById('loginBtn');
+    const authStatusText = document.getElementById('authStatusText');
+    const authError = document.getElementById('authError');
+    
+    try {
+        // Step 1: Check if window.auth0 exists
+        debugLog('Checking for window.auth0...', 'info');
+        if (typeof window.auth0 === 'undefined') {
+            throw new Error('window.auth0 is undefined - CDN script may not have loaded');
+        }
+        debugLog('✓ window.auth0 exists', 'success');
         
-        <div class="footer">
-            <p>Built for plant breeders, by plant breeders | Personalized Dashboard v2.1</p>
-        </div>
-    </div>
-    
-    <div class="modal" id="settingsModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>⚙️ Dashboard Settings</h2>
-                <button class="close-btn" onclick="closeSettings()">&times;</button>
-            </div>
-            
-            <div class="settings-section">
-                <h3>Hidden Tools</h3>
-                <div class="hidden-tools-list" id="hiddenToolsList">
-                    <p style="color: #999; text-align: center;">No hidden tools</p>
-                </div>
-            </div>
-            
-            <div class="settings-section">
-                <h3>Reset Options</h3>
-                <button onclick="resetFavorites()">Clear All Favorites</button>
-                <button onclick="resetHidden()">Show All Hidden Tools</button>
-                <button onclick="resetAll()">Reset Everything</button>
-            </div>
-        </div>
-    </div>
-    
-    <div class="modal" id="qrCodeModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>📱 Scan to Transfer Settings</h2>
-                <button class="close-btn" onclick="closeQrCodeModal()">&times;</button>
-            </div>
-            <p style="margin-bottom: 20px; color: #666; font-size: 14px;">Scan this QR code on your mobile device to import your current dashboard configuration (favorites, hidden tools, quick links).</p>
-            <div id="qrcodeContainer">
-                <p style="color: #4CAF50;">Generating QR Code...</p>
-            </div>
-            <p style="margin-top: 20px; color: #888; font-size: 12px;">For long configurations, the QR code may take a moment to scan. Keep the current page open.</p>
-        </div>
-    </div>
-
-    <script>
-        let favorites = [];
-        let hiddenTools = [];
-        let quickLinks = [];
-        let currentFilter = 'all';
-        let auth0 = null;
-
-        const initAuth0 = async () => {
-            auth0 = await createAuth0Client({
-                domain: 'dev-hctfmbntodg4ekwd.us.auth0.com',
-                client_id: 'v6yhw1p536sLDxH95gaT8DWd9KJ4nj6k',
+        // Step 2: Check if createAuth0Client exists
+        debugLog('Checking for createAuth0Client...', 'info');
+        if (typeof window.auth0.createAuth0Client !== 'function') {
+            throw new Error('window.auth0.createAuth0Client is not a function');
+        }
+        debugLog('✓ createAuth0Client is a function', 'success');
+        
+        // Step 3: Create Auth0 client
+        debugLog('Creating Auth0 client...', 'info');
+        const config = {
+            domain: 'dev-hctfmbntodg4ekwd.us.auth0.com',
+            clientId: 'v6yhw1p536sLDxH95gaT8DWd9KJ4nj6k',
+            authorizationParams: {
                 redirect_uri: window.location.origin
-            });
-
-            if (window.location.search.includes('code=')) {
-                await auth0.handleRedirectCallback();
-                window.history.replaceState({}, document.title, window.location.pathname);
-            }
-
-            updateAuthUI();
+            },
+            cacheLocation: 'localstorage',
+            useRefreshTokens: true
         };
+        debugLog('Config: ' + JSON.stringify(config, null, 2), 'info');
+        
+        auth0Client = await window.auth0.createAuth0Client(config);
+        debugLog('✓ Auth0 client created successfully', 'success');
+        
+        // Step 4: Enable login button
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'Login';
+        authStatusText.textContent = 'Ready';
+        authStatusText.style.color = '#00ff00';
+        debugLog('✓ Login button enabled', 'success');
+        
+        // Step 5: Handle authentication callback
+        debugLog('Checking for authentication callback...', 'info');
+        await handleAuth();
+        
+    } catch(err) {
+        debugLog('❌ Auth0 initialization FAILED: ' + err.message, 'error');
+        debugLog('Error stack: ' + err.stack, 'error');
+        
+        authError.textContent = '❌ ' + err.message;
+        authStatusText.textContent = 'Failed';
+        authStatusText.style.color = '#ff6b6b';
+        loginBtn.disabled = true;
+        loginBtn.textContent = 'Login Unavailable';
+        
+        // Additional diagnostics
+        debugLog('Window object keys containing "auth": ' + 
+            Object.keys(window).filter(k => k.toLowerCase().includes('auth')).join(', '), 'info');
+        debugLog('Document scripts: ' + 
+            Array.from(document.scripts).map(s => s.src).join(', '), 'info');
+    }
+}
 
-        const updateAuthUI = async () => {
-            const isAuthenticated = await auth0.isAuthenticated();
-            document.getElementById('loginBtn').style.display = isAuthenticated ? 'none' : 'inline-block';
-            document.getElementById('logoutBtn').style.display = isAuthenticated ? 'inline-block' : 'none';
+async function handleAuth() {
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        debugLog('URL params: ' + window.location.search, 'info');
+        
+        // Check if this is a redirect callback
+        if (urlParams.has('code') && urlParams.has('state')) {
+            debugLog('Detected OAuth callback, handling redirect...', 'info');
+            
+            const result = await auth0Client.handleRedirectCallback();
+            debugLog('Redirect callback handled successfully', 'success');
+            debugLog('Result: ' + JSON.stringify(result), 'info');
+            
+            // Clean up URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+            debugLog('URL cleaned', 'info');
+        }
+        
+        // Check authentication status
+        debugLog('Checking if user is authenticated...', 'info');
+        const isAuthenticated = await auth0Client.isAuthenticated();
+        debugLog('Is authenticated: ' + isAuthenticated, isAuthenticated ? 'success' : 'info');
+        
+        await updateAuthUI(isAuthenticated);
+        
+    } catch(err) {
+        debugLog('❌ Error handling auth: ' + err.message, 'error');
+        debugLog('Error stack: ' + err.stack, 'error');
+        document.getElementById('authError').textContent = '⚠️ ' + err.message;
+    }
+}
 
-            if (isAuthenticated) {
-                const user = await auth0.getUser();
-                document.getElementById('userProfile').textContent = `Hello, ${user.name}`;
-            } else {
-                document.getElementById('userProfile').textContent = '';
-            }
-        };
+async function updateAuthUI(isAuthenticated = false) {
+    debugLog('Updating auth UI, authenticated: ' + isAuthenticated, 'info');
+    
+    const loginBtn = document.getElementById('loginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const userProfile = document.getElementById('userProfile');
+    const authStatusText = document.getElementById('authStatusText');
 
-        function generateFunctionalQrCode(containerId, data, size = 256) {
-            const container = document.getElementById(containerId);
-            container.innerHTML = '';
-            const canvas = document.createElement('canvas');
-            canvas.width = size;
-            canvas.height = size;
-            const ctx = canvas.getContext('2d');
-            ctx.fillStyle = "#ffffff";
-            ctx.fillRect(0, 0, size, size);
-            const moduleCount = 37;
-            const pixelSize = size / moduleCount;
-            ctx.fillStyle = "#000000";
-            for (let r = 0; r < moduleCount; r++) {
-                for (let c = 0; c < moduleCount; c++) {
-                    if ((r < 7 && c < 7) || (r < 7 && c >= moduleCount - 7) || (r >= moduleCount - 7 && c < 7)) {
-                        if ((r % 2 === 0 && c % 2 === 0) || (r % 3 === 0 && c % 3 === 0)) {
-                            ctx.fillRect(c * pixelSize, r * pixelSize, pixelSize, pixelSize);
-                        }
-                    } else if ((r * c + r + c) % 5 === 0) {
-                        ctx.fillRect(c * pixelSize, r * pixelSize, pixelSize, pixelSize);
-                    }
-                }
-            }
-            ctx.font = '12px Arial';
-            ctx.fillStyle = '#1e3c72';
-            ctx.textAlign = 'center';
-            ctx.fillText('QR Code Placeholder', size / 2, size / 2 - 10);
-            ctx.fillText('(Data Length: ' + data.length + ' bytes)', size / 2, size / 2 + 10);
-            container.appendChild(canvas);
-        }
-        
-        function init() {
-            const params = new URLSearchParams(window.location.search);
-            const importData = params.get('import');
-            if (importData) {
-                const newUrl = window.location.href.split('?')[0];
-                history.replaceState({}, document.title, newUrl);
-                try {
-                    const settings = JSON.parse(decodeURIComponent(importData));
-                    if (settings.favorites || settings.hiddenTools || settings.quickLinks) {
-                        if (confirm('Mobile configuration found in the URL. Apply them to your dashboard?')) {
-                            applyImportedSettings(settings);
-                            alert('Settings imported successfully from mobile URL!');
-                        }
-                    }
-                } catch (error) {
-                    console.error('Error parsing imported settings from URL:', error);
-                    alert('Error importing settings from URL.');
-                }
-            }
-            favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-            hiddenTools = JSON.parse(localStorage.getItem('hiddenTools') || '[]');
-            quickLinks = JSON.parse(localStorage.getItem('quickLinks') || '[]');
-            renderDashboard();
-            renderQuickLinks();
-            const loginBtn = document.getElementById('loginBtn');
-            const logoutBtn = document.getElementById('logoutBtn');
-            if (loginBtn) {
-                loginBtn.addEventListener('click', async () => {
-                    await auth0.loginWithRedirect({ redirect_uri: window.location.origin });
-                });
-            }
-            if (logoutBtn) {
-                logoutBtn.addEventListener('click', () => {
-                    auth0.logout({ returnTo: window.location.origin });
-                });
-            }
-        }
+    loginBtn.style.display = isAuthenticated ? 'none' : 'inline-block';
+    logoutBtn.style.display = isAuthenticated ? 'inline-block' : 'none';
 
-        function applyImportedSettings(settings) {
-            favorites = settings.favorites || [];
-            hiddenTools = settings.hiddenTools || [];
-            quickLinks = settings.quickLinks || [];
-            localStorage.setItem('favorites', JSON.stringify(favorites));
-            localStorage.setItem('hiddenTools', JSON.stringify(hiddenTools));
-            localStorage.setItem('quickLinks', JSON.stringify(quickLinks));
-            renderDashboard();
-            renderQuickLinks();
-        }
+    if (isAuthenticated) {
+        currentUser = await auth0Client.getUser();
+        debugLog('Current user: ' + JSON.stringify(currentUser), 'success');
         
-        function renderDashboard() {
-            const allCards = document.querySelectorAll('#toolsGrid .tool-card');
-            const favSection = document.getElementById('favoritesSection');
-            const favGrid = document.getElementById('favoritesGrid');
-            favGrid.innerHTML = '';
-            allCards.forEach(card => {
-                const id = card.dataset.id;
-                const starBtn = card.querySelector('.star');
-                if (favorites.includes(id)) {
-                    starBtn.classList.add('active');
-                    const clone = card.cloneNode(true);
-                    clone.querySelector('.star').onclick = (e) => toggleFavorite(e, id);
-                    clone.querySelector('.hide').onclick = (e) => hideTool(e, id);
-                    favGrid.appendChild(clone);
-                } else {
-                    starBtn.classList.remove('active');
-                }
-                if (hiddenTools.includes(id)) {
-                    card.classList.add('hidden');
-                } else {
-                    card.classList.remove('hidden');
-                }
-            });
-            if (favorites.length > 0 && currentFilter !== 'favorites') {
-                favSection.style.display = 'block';
-            } else {
-                favSection.style.display = 'none';
-            }
-            applyFilter();
-        }
+        userProfile.textContent = `👤 ${currentUser.name || currentUser.email}`;
+        authStatusText.textContent = 'Authenticated';
+        authStatusText.style.color = '#00ff00';
         
-        function toggleFavorite(event, id) {
-            event.stopPropagation();
-            if (favorites.includes(id)) {
-                favorites = favorites.filter(f => f !== id);
-            } else {
-                favorites.push(id);
-            }
-            localStorage.setItem('favorites', JSON.stringify(favorites));
-            renderDashboard();
-        }
+        loadUserSettings();
+    } else {
+        currentUser = null;
+        userProfile.textContent = '';
+        authStatusText.textContent = 'Not logged in';
+        authStatusText.style.color = '#ffaa00';
         
-        function hideTool(event, id) {
-            event.stopPropagation();
-            if (confirm('Hide this tool from your dashboard? You can unhide it in Settings.')) {
-                hiddenTools.push(id);
-                localStorage.setItem('hiddenTools', JSON.stringify(hiddenTools));
-                renderDashboard();
-                updateHiddenToolsList();
-            }
-        }
-        
-        function showTool(id) {
-            hiddenTools = hiddenTools.filter(h => h !== id);
-            localStorage.setItem('hiddenTools', JSON.stringify(hiddenTools));
-            renderDashboard();
-            updateHiddenToolsList();
-        }
-        
-        function filterTools(filter) {
-            currentFilter = filter;
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            applyFilter();
-        }
-        
-        function applyFilter() {
-            const allCards = document.querySelectorAll('#toolsGrid .tool-card');
-            const favSection = document.getElementById('favoritesSection');
-            allCards.forEach(card => {
-                const id = card.dataset.id;
-                const status = card.dataset.status;
-                const isHidden = hiddenTools.includes(id);
-                const isFavorite = favorites.includes(id);
-                if (isHidden) {
-                    card.style.display = 'none';
-                    return;
-                }
-                if (currentFilter === 'all') {
-                    card.style.display = 'block';
-                } else if (currentFilter === 'favorites') {
-                    card.style.display = isFavorite ? 'block' : 'none';
-                    favSection.style.display = 'none';
-                } else if (currentFilter === 'active') {
-                    card.style.display = status === 'active' ? 'block' : 'none';
-                }
-            });
-        }
-        
-        function renderQuickLinks() {
-            const container = document.getElementById('linksList');
-            container.innerHTML = '';
-            quickLinks.forEach((link, index) => {
-                const div = document.createElement('div');
-                div.className = 'quick-link-item';
-                div.innerHTML = `<a href="${link.url}" target="_blank">${link.name}</a><button onclick="removeQuickLink(${index})">×</button>`;
-                container.appendChild(div);
-            });
-            if (quickLinks.length === 0) {
-                container.innerHTML = '<p style="color: rgba(255,255,255,0.7); font-size: 13px;">No quick links added yet</p>';
-            }
-        }
-        
-        function toggleAddLinkForm() {
-            const form = document.getElementById('addLinkForm');
-            form.classList.toggle('active');
-            if (!form.classList.contains('active')) {
-                document.getElementById('linkName').value = '';
-                document.getElementById('linkUrl').value = '';
-            }
-        }
-        
-        function addQuickLink() {
-            const name = document.getElementById('linkName').value.trim();
-            const url = document.getElementById('linkUrl').value.trim();
-            if (name && url) {
-                quickLinks.push({ name, url });
-                localStorage.setItem('quickLinks', JSON.stringify(quickLinks));
-                renderQuickLinks();
-                toggleAddLinkForm();
-            } else {
-                alert('Please enter both name and URL');
-            }
-        }
-        
-        function removeQuickLink(index) {
-            quickLinks.splice(index, 1);
-            localStorage.setItem('quickLinks', JSON.stringify(quickLinks));
-            renderQuickLinks();
-        }
-        
-        function openSettings() {
-            document.getElementById('settingsModal').classList.add('active');
-            updateHiddenToolsList();
-        }
-        
-        function closeSettings() {
-            document.getElementById('settingsModal').classList.remove('active');
-        }
-        
-        function updateHiddenToolsList() {
-            const container = document.getElementById('hiddenToolsList');
-            container.innerHTML = '';
-            if (hiddenTools.length === 0) {
-                container.innerHTML = '<p style="color: #999; text-align: center;">No hidden tools</p>';
-                return;
-            }
-            hiddenTools.forEach(id => {
-                const card = document.querySelector(`[data-id="${id}"]`);
-                const name = card ? card.querySelector('h3').textContent : id;
-                const div = document.createElement('div');
-                div.className = 'hidden-tool-item';
-                div.innerHTML = `<span>${name}</span><button onclick="showTool('${id}')">Show</button>`;
-                container.appendChild(div);
-            });
-        }
-        
-        function resetFavorites() {
-            if (confirm('Remove all favorites?')) {
-                favorites = [];
-                localStorage.setItem('favorites', JSON.stringify(favorites));
-                renderDashboard();
-            }
-        }
-        
-        function resetHidden() {
-            if (confirm('Show all hidden tools?')) {
-                hiddenTools = [];
-                localStorage.setItem('hiddenTools', JSON.stringify(hiddenTools));
-                renderDashboard();
-                updateHiddenToolsList();
-            }
-        }
-        
-        function resetAll() {
-            if (confirm('Reset everything to defaults? This will clear favorites, hidden tools, and quick links.')) {
-                favorites = [];
-                hiddenTools = [];
-                quickLinks = [];
-                localStorage.clear();
-                renderDashboard();
-                renderQuickLinks();
-                updateHiddenToolsList();
-            }
-        }
+        loadLocalSettings();
+    }
+}
 
-        function getDashboardSettings() {
-            return {
-                favorites: favorites,
-                hiddenTools: hiddenTools,
-                quickLinks: quickLinks,
-                exportDate: new Date().toISOString()
-            };
-        }
-
-        function generateQrCode() {
-            const settings = getDashboardSettings();
-            const jsonString = JSON.stringify(settings);
-            const baseUrl = window.location.href.split('?')[0];
-            const encodedJson = encodeURIComponent(jsonString);
-            const dataUrl = `${baseUrl}?import=${encodedJson}`;
-            openQrCodeModal();
-            generateFunctionalQrCode('qrcodeContainer', dataUrl, 256);
-        }
-
-        function openQrCodeModal() {
-            document.getElementById('qrCodeModal').classList.add('active');
-        }
-
-        function closeQrCodeModal() {
-            document.getElementById('qrCodeModal').classList.remove('active');
-        }
+async function login() {
+    debugLog('Login button clicked', 'info');
+    
+    if (!auth0Client) {
+        debugLog('❌ Cannot login: auth0Client is null', 'error');
+        alert('Auth0 is not initialized yet. Please check the debug console.');
+        return;
+    }
+    
+    try {
+        debugLog('Starting login redirect...', 'info');
         
-        function exportSettings() {
-            const settings = getDashboardSettings();
-            const blob = new Blob([JSON.stringify(settings, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `breeding-tools-settings-${Date.now()}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-        
-        function importSettings(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const settings = JSON.parse(e.target.result);
-                    applyImportedSettings(settings);
-                    alert('Settings imported successfully!');
-                } catch (error) {
-                    alert('Error importing settings. Please check the file format.');
-                }
-            };
-            reader.readAsText(file);
-        }
-        
-        window.addEventListener('DOMContentLoaded', () => {
-            initAuth0();
-            init();
+        await auth0Client.loginWithRedirect({
+            authorizationParams: {
+                redirect_uri: window.location.origin
+            }
         });
-    </script>
+        
+        debugLog('Login redirect initiated (you should be redirected now)', 'success');
+    } catch(err) {
+        debugLog('❌ Login failed: ' + err.message, 'error');
+        debugLog('Error stack: ' + err.stack, 'error');
+        alert('Login failed: ' + err.message);
+    }
+}
+
+async function logout() {
+    debugLog('Logout initiated', 'info');
+    
+    if (!auth0Client) {
+        debugLog('❌ Cannot logout: auth0Client is null', 'error');
+        return;
+    }
+    
+    try {
+        currentUser = null;
+        document.getElementById('userProfile').textContent = '';
+        document.getElementById('authStatusText').textContent = 'Logging out...';
+        
+        favorites = [];
+        hiddenTools = [];
+        quickLinks = [];
+        
+        localStorage.clear();
+        debugLog('Local storage cleared', 'info');
+        
+        await auth0Client.logout({
+            logoutParams: {
+                returnTo: window.location.origin
+            }
+        });
+        
+        debugLog('Logout completed', 'success');
+    } catch(err) {
+        debugLog('❌ Logout error: ' + err.message, 'error');
+    }
+}
+
+/* ------------------ SETTINGS MANAGEMENT ------------------ */
+function loadUserSettings() {
+    debugLog('Loading user settings...', 'info');
+    const key = currentUser ? `settings_${currentUser.sub}` : 'settings_guest';
+    const saved = localStorage.getItem(key);
+    
+    if (saved) {
+        try {
+            const data = JSON.parse(saved);
+            favorites = data.favorites || [];
+            hiddenTools = data.hiddenTools || [];
+            quickLinks = data.quickLinks || [];
+            debugLog(`Loaded ${favorites.length} favorites, ${hiddenTools.length} hidden tools, ${quickLinks.length} quick links`, 'success');
+        } catch(err) {
+            debugLog('❌ Error parsing saved settings: ' + err.message, 'error');
+        }
+    } else {
+        debugLog('No saved settings found', 'info');
+    }
+    
+    renderDashboard();
+}
+
+function loadLocalSettings() {
+    debugLog('Loading local (guest) settings...', 'info');
+    loadUserSettings();
+}
+
+function saveUserSettings() {
+    const key = currentUser ? `settings_${currentUser.sub}` : 'settings_guest';
+    const data = { favorites, hiddenTools, quickLinks };
+    localStorage.setItem(key, JSON.stringify(data));
+    debugLog('Settings saved to localStorage', 'info');
+}
+
+function renderDashboard() {
+    debugLog('Rendering dashboard...', 'info');
+    applyFilter();
+    renderQuickLinks();
+    updateHiddenToolsList();
+}
+
+/* ------------------ FAVORITES ------------------ */
+function toggleFavorite(event, toolId) {
+    event.stopPropagation();
+    const idx = favorites.indexOf(toolId);
+    
+    if (idx > -1) {
+        favorites.splice(idx, 1);
+        debugLog(`Removed ${toolId} from favorites`, 'info');
+    } else {
+        favorites.push(toolId);
+        debugLog(`Added ${toolId} to favorites`, 'info');
+    }
+    
+    saveUserSettings();
+    renderDashboard();
+}
+
+/* ------------------ HIDE/SHOW TOOLS ------------------ */
+function hideTool(event, toolId) {
+    event.stopPropagation();
+    
+    if (!hiddenTools.includes(toolId)) {
+        hiddenTools.push(toolId);
+        debugLog(`Hidden tool: ${toolId}`, 'info');
+    }
+    
+    saveUserSettings();
+    renderDashboard();
+}
+
+function showTool(toolId) {
+    hiddenTools = hiddenTools.filter(id => id !== toolId);
+    debugLog(`Unhidden tool: ${toolId}`, 'info');
+    saveUserSettings();
+    renderDashboard();
+}
+
+/* ------------------ FILTERING ------------------ */
+function filterTools(filter, event) {
+    currentFilter = filter;
+    debugLog(`Filter changed to: ${filter}`, 'info');
+    
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    if (event) event.target.classList.add('active');
+    
+    applyFilter();
+}
+
+function applyFilter() {
+    const allCards = document.querySelectorAll('#toolsGrid .tool-card');
+    const favSection = document.getElementById('favoritesSection');
+    const favGrid = document.getElementById('favoritesGrid');
+    
+    favGrid.innerHTML = '';
+    favSection.style.display = 'none';
+    
+    let visibleCount = 0;
+    
+    allCards.forEach(card => {
+        const toolId = card.dataset.id;
+        const status = card.dataset.status;
+        const isFav = favorites.includes(toolId);
+        const isHidden = hiddenTools.includes(toolId);
+        
+        const star = card.querySelector('.star');
+        if (star) {
+            star.classList.toggle('active', isFav);
+        }
+        
+        if (isHidden) {
+            card.classList.add('hidden');
+            return;
+        }
+        
+        card.classList.remove('hidden');
+        
+        if (currentFilter === 'favorites' && !isFav) {
+            card.classList.add('hidden');
+            return;
+        }
+        
+        if (currentFilter === 'active' && status !== 'active') {
+            card.classList.add('hidden');
+            return;
+        }
+        
+        visibleCount++;
+        
+        if (isFav && currentFilter === 'all') {
+            const clone = card.cloneNode(true);
+            favGrid.appendChild(clone);
+            favSection.style.display = 'block';
+        }
+    });
+    
+    debugLog(`Visible tools: ${visibleCount}`, 'info');
+}
+
+/* ------------------ QUICK LINKS ------------------ */
+function renderQuickLinks() {
+    const list = document.getElementById('linksList');
+    
+    if (quickLinks.length === 0) {
+        list.innerHTML = '<div style="color: rgba(255,255,255,0.6); font-size: 14px;">No quick links yet. Add one!</div>';
+        return;
+    }
+    
+    list.innerHTML = quickLinks.map((link, i) => `
+        <div class="quick-link-item">
+            <a href="${link.url}" target="_blank" rel="noopener">${link.name}</a>
+            <button onclick="removeQuickLink(${i})">×</button>
+        </div>
+    `).join('');
+}
+
+function addQuickLink() {
+    const name = document.getElementById('linkName').value.trim();
+    const url = document.getElementById('linkUrl').value.trim();
+    
+    if (!name || !url) {
+        alert('Please fill both fields');
+        return;
+    }
+    
+    quickLinks.push({ name, url });
+    debugLog(`Added quick link: ${name} -> ${url}`, 'success');
+    
+    document.getElementById('linkName').value = '';
+    document.getElementById('linkUrl').value = '';
+    
+    saveUserSettings();
+    renderQuickLinks();
+}
+
+function removeQuickLink(index) {
+    const removed = quickLinks[index];
+    quickLinks.splice(index, 1);
+    debugLog(`Removed quick link: ${removed.name}`, 'info');
+    
+    saveUserSettings();
+    renderQuickLinks();
+}
+
+function toggleAddLinkForm() {
+    const form = document.getElementById('addLinkForm');
+    form.classList.toggle('active');
+    debugLog('Toggled add link form', 'info');
+}
+
+/* ------------------ SETTINGS MODAL ------------------ */
+function openSettings() {
+    document.getElementById('settingsModal').classList.add('active');
+    updateHiddenToolsList();
+    debugLog('Settings modal opened', 'info');
+}
+
+function closeSettings() {
+    document.getElementById('settingsModal').classList.remove('active');
+    debugLog('Settings modal closed', 'info');
+}
+
+function updateHiddenToolsList() {
+    const list = document.getElementById('hiddenToolsList');
+    
+    if (hiddenTools.length === 0) {
+        list.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">No hidden tools</p>';
+        return;
+    }
+    
+    list.innerHTML = hiddenTools.map(id => {
+        const card = document.querySelector(`[data-id="${id}"]`);
+        const name = card ? card.querySelector('h3').textContent : id;
+        return `
+            <div class="hidden-tool-item">
+                <span>${name}</span>
+                <button onclick="showTool('${id}')">Show</button>
+            </div>
+        `;
+    }).join('');
+}
+
+function resetFavorites() {
+    if (confirm('Reset all favorites? This cannot be undone.')) {
+        favorites = [];
+        debugLog('All favorites reset', 'warning');
+        saveUserSettings();
+        renderDashboard();
+    }
+}
+
+function resetHidden() {
+    if (confirm('Show all hidden tools?')) {
+        const count = hiddenTools.length;
+        hiddenTools = [];
+        debugLog(`${count} hidden tools restored`, 'warning');
+        saveUserSettings();
+        renderDashboard();
+        updateHiddenToolsList();
+    }
+}
+
+function resetAll() {
+    if (confirm('Reset everything? This will clear all your favorites, hidden tools, and quick links. This cannot be undone.')) {
+        favorites = [];
+        hiddenTools = [];
+        quickLinks = [];
+        debugLog('All settings reset', 'warning');
+        saveUserSettings();
+        renderDashboard();
+        closeSettings();
+    }
+}
+
+function exportSettings() {
+    const data = {
+        favorites,
+        hiddenTools,
+        quickLinks,
+        exportDate: new Date().toISOString(),
+        user: currentUser ? currentUser.email : 'guest'
+    };
+    
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `dashboard-settings-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    debugLog('Settings exported', 'success');
+}
+
+function importSettings(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    debugLog(`Importing settings from: ${file.name}`, 'info');
+    
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const data = JSON.parse(e.target.result);
+            
+            favorites = data.favorites || [];
+            hiddenTools = data.hiddenTools || [];
+            quickLinks = data.quickLinks || [];
+            
+            debugLog(`Imported ${favorites.length} favorites, ${hiddenTools.length} hidden tools, ${quickLinks.length} quick links`, 'success');
+            
+            saveUserSettings();
+            renderDashboard();
+            
+            alert('Settings imported successfully!');
+        } catch (err) {
+            debugLog('❌ Failed to import settings: ' + err.message, 'error');
+            alert('Failed to import settings: ' + err.message);
+        }
+    };
+    reader.readAsText(file);
+}
+
+/* ------------------ INITIALIZATION ------------------ */
+window.addEventListener('DOMContentLoaded', async () => {
+    debugLog('=== APPLICATION STARTING ===', 'info');
+    debugLog('DOM Content Loaded', 'info');
+    debugLog('Current URL: ' + window.location.href, 'info');
+    debugLog('User Agent: ' + navigator.userAgent, 'info');
+    
+    // Check for Auth0 script
+    debugLog('Checking for Auth0 script tag...', 'info');
+    const auth0Script = Array.from(document.scripts).find(s => s.src.includes('auth0'));
+    if (auth0Script) {
+        debugLog('✓ Auth0 script tag found: ' + auth0Script.src, 'success');
+    } else {
+        debugLog('❌ Auth0 script tag NOT found', 'error');
+    }
+    
+    // Wait a moment for scripts to load
+    debugLog('Waiting 500ms for scripts to load...', 'info');
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // Initialize Auth0
+    await initAuth0();
+    
+    debugLog('=== INITIALIZATION COMPLETE ===', 'success');
+});
+
+// Log any uncaught errors
+window.addEventListener('error', (event) => {
+    debugLog('❌ Uncaught error: ' + event.message, 'error');
+    debugLog('Error at: ' + event.filename + ':' + event.lineno + ':' + event.colno, 'error');
+});
+
+window.addEventListener('unhandledrejection', (event) => {
+    debugLog('❌ Unhandled promise rejection: ' + event.reason, 'error');
+});
+
+debugLog('Script loaded and event listeners registered', 'success');
+</script>
 </body>
 </html>
