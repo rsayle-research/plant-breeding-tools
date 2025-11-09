@@ -1,99 +1,86 @@
 /* -------------------------------------------------
-   GLOBAL RESET & TYPOGRAPHY
+   LOGIN PAGE SPECIFIC STYLES
 ------------------------------------------------- */
-*{margin:0;padding:0;box-sizing:border-box}
-html{font-size:16px}
-body{
-  min-height:100vh;
-  font-family:'Segoe UI',Arial,sans-serif;
-  background:#f4f7fb;
-  color:#333;
-  line-height:1.5;
+.login-container{
+  flex:1;
   display:flex;
   flex-direction:column;
-}
-
-/* -------------------------------------------------
-   HEADER (Contact Us only)
-------------------------------------------------- */
-header{
-  position:absolute;
-  top:0;left:0;right:0;
-  padding:1.2rem 2rem;
-  display:flex;
-  justify-content:flex-end;
-}
-header a{
-  color:#2c3e50;
-  font-weight:600;
-  text-decoration:none;
-  font-size:0.95rem;
-}
-header a:hover{text-decoration:underline}
-
-/* -------------------------------------------------
-   FOOTER
-------------------------------------------------- */
-footer{
-  background:#2c3e50;
-  color:#ddd;
-  text-align:center;
-  padding:1.5rem 0;
-  font-size:.9rem;
-  margin-top:auto;
-}
-
-/* -------------------------------------------------
-   SOLUTIONS GRID (shared)
-------------------------------------------------- */
-.solutions h2{
-  text-align:center;
-  font-size:2rem;
-  margin-bottom:2rem;
-  color:#2c3e50;
-}
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
-  gap:1.8rem;
-  max-width:1400px;
+  align-items:center;
+  justify-content:center;
+  padding:6rem 2rem 4rem;
+  max-width:1600px;
   margin:0 auto;
-}
-.card{
-  background:#fff;
-  border-radius:12px;
-  overflow:hidden;
-  box-shadow:0 4px 16px rgba(0,0,0,.07);
-  transition:transform .25s,box-shadow .25s;
-}
-.card:hover{
-  transform:translateY(-6px);
-  box-shadow:0 12px 28px rgba(0,0,0,.12);
-}
-.card img{
   width:100%;
-  height:180px;
-  object-fit:cover;
 }
-.card-body{
-  padding:1.4rem;
+
+.login-logo{
+  margin-bottom:2rem;
 }
-.card h3{
-  font-size:1.25rem;
-  margin-bottom:.5rem;
-  color:#2c3e50;
+
+.login-logo img{
+  width:280px;
+  height:auto;
+  filter:drop-shadow(0 8px 24px rgba(0,102,255,.15));
+  transition:transform .3s ease;
 }
-.card p{
-  font-size:.92rem;
-  color:#666;
-  margin-bottom:1rem;
+
+.login-logo img:hover{
+  transform:scale(1.05);
 }
-.card .badge{
-  display:inline-block;
-  background:#e0f2ff;
-  color:#0066ff;
-  font-size:.78rem;
+
+.login-slogan{
+  font-size:1.35rem;
+  color:#4a5568;
+  margin-bottom:3rem;
+  text-align:center;
+  font-weight:500;
+  letter-spacing:0.3px;
+}
+
+.auth-buttons{
+  display:flex;
+  gap:1.5rem;
+  margin-bottom:5rem;
+}
+
+.auth-btn{
+  padding:1rem 2.5rem;
+  font-size:1.05rem;
   font-weight:600;
-  padding:.25rem .65rem;
-  border-radius:20px;
+  border:none;
+  border-radius:12px;
+  cursor:pointer;
+  transition:all .3s cubic-bezier(0.4,0,0.2,1);
+  letter-spacing:0.3px;
+  box-shadow:0 4px 16px rgba(0,0,0,.1);
+}
+
+.signin-btn{
+  background:linear-gradient(135deg,#0066ff 0%,#0052cc 100%);
+  color:#fff;
+}
+
+.signin-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(0,102,255,.3);
+  background:linear-gradient(135deg,#0052cc 0%,#003d99 100%);
+}
+
+.signup-btn{
+  background:#fff;
+  color:#0066ff;
+  border:2px solid #0066ff;
+  box-shadow:0 4px 16px rgba(0,102,255,.1);
+}
+
+.signup-btn:hover{
+  transform:translateY(-2px);
+  background:#0066ff;
+  color:#fff;
+  box-shadow:0 8px 24px rgba(0,102,255,.3);
+}
+
+.solutions{
+  width:100%;
+  padding:3rem 2rem;
 }
