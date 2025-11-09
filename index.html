@@ -5,22 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Genexis Cloud – Login</title>
 
-  <!-- Shared Styles -->
+  <!-- GLOBAL + LOGIN STYLES -->
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/login.css" />
 
-  <!-- Auth0 SDK -->
+  <!-- AUTH0 SDK -->
   <script src="https://cdn.auth0.com/js/auth0-spa-js/2.1/auth0-spa-js.production.js"></script>
 </head>
-
 <body>
 
-  <!-- Header: Only Contact Us -->
+  <!-- CONTACT US (top-right) -->
   <header>
     <a href="mailto:support@genexis.cloud">Contact Us</a>
   </header>
 
-  <!-- Login Container -->
+  <!-- MAIN LOGIN AREA -->
   <main class="login-container">
     <div class="login-logo">
       <img src="assets/logo.png" alt="Genexis Cloud Logo" />
@@ -33,93 +32,61 @@
       <button id="signupBtn" class="auth-btn signup-btn">Create an Account</button>
     </div>
 
-    <!-- Our Solutions Section -->
+    <!-- OUR SOLUTIONS SECTION -->
     <section class="solutions">
       <h2>Our Solutions</h2>
       <div class="grid">
         <div class="card">
           <img src="https://via.placeholder.com/400x180/4a90e2/ffffff?text=Genomic+Data+Analysis" alt="">
-          <div class="card-body">
-            <h3>Genomic Data Analysis</h3>
-            <p>Process, analyze, and visualize large-scale genomic datasets with ease.</p>
-            <span class="badge">Active</span>
-          </div>
+          <div class="card-body"><h3>Genomic Data Analysis</h3><p>Process, analyze, and visualize large-scale genomic datasets with ease.</p><span class="badge">Active</span></div>
         </div>
         <div class="card">
           <img src="https://via.placeholder.com/400x180/50c8ff/ffffff?text=RNA+Sequencing" alt="">
-          <div class="card-body">
-            <h3>RNA Sequencing</h3>
-            <p>From raw reads to differential expression – all in one platform.</p>
-            <span class="badge">Active</span>
-          </div>
+          <div class="card-body"><h3>RNA Sequencing</h3><p>From raw reads to differential expression – all in one platform.</p><span class="badge">Active</span></div>
         </div>
         <div class="card">
           <img src="https://via.placeholder.com/400x180/7ed321/ffffff?text=Unassembling" alt="">
-          <div class="card-body">
-            <h3>Unassembling</h3>
-            <p>De-novo assembly of complex genomes with unmatched speed.</p>
-            <span class="badge">Coming Soon</span>
-          </div>
+          <div class="card-body"><h3>Unassembling</h3><p>De-novo assembly of complex genomes with unmatched speed.</p><span class="badge">Coming Soon</span></div>
         </div>
         <div class="card">
           <img src="https://via.placeholder.com/400x180/ff6b6b/ffffff?text=Protein+Cryo-EM" alt="">
-          <div class="card-body">
-            <h3>Protein Cryo-EM</h3>
-            <p>High-resolution structure determination from cryo-EM data.</p>
-            <span class="badge">Active</span>
-          </div>
+          <div class="card-body"><h3>Protein Cryo-EM</h3><p>High-resolution structure determination from cryo-EM data.</p><span class="badge">Active</span></div>
         </div>
         <div class="card">
           <img src="https://via.placeholder.com/400x180/ffb800/ffffff?text=High+Scale" alt="">
-          <div class="card-body">
-            <h3>High Scale</h3>
-            <p>Process terabyte-scale datasets on cloud-native infrastructure.</p>
-            <span class="badge">Active</span>
-          </div>
+          <div class="card-body"><h3>High Scale</h3><p>Process terabyte-scale datasets on cloud-native infrastructure.</p><span class="badge">Active</span></div>
         </div>
         <div class="card">
           <img src="https://via.placeholder.com/400x180/9b59b6/ffffff?text=Costly+Sets" alt="">
-          <div class="card-body">
-            <h3>Costly Sets</h3>
-            <p>Advanced statistical modeling for expensive experimental designs.</p>
-            <span class="badge">Coming Soon</span>
-          </div>
+          <div class="card-body"><h3>Costly Sets</h3><p>Advanced statistical modeling for expensive experimental designs.</p><span class="badge">Coming Soon</span></div>
         </div>
       </div>
     </section>
   </main>
 
-  <!-- Footer -->
-  <footer>
-    © 2025 Genexis Cloud. All rights reserved.
-  </footer>
+  <footer>© 2025 Genexis Cloud. All rights reserved.</footer>
 
-  <!-- Auth Logic -->
+  <!-- AUTH LOGIC -->
   <script src="js/auth.js"></script>
   <script>
-    // Auto-redirect if already logged in
     document.addEventListener('DOMContentLoaded', async () => {
       try {
-        await initAuth0(); // from js/auth.js
-        const isAuthenticated = await auth0Client.isAuthenticated();
-        if (isAuthenticated) {
+        await initAuth0();                     // from js/auth.js
+        if (await auth0Client.isAuthenticated()) {
           window.location.href = 'dashboard.html';
         } else {
-          // Setup button handlers
           document.getElementById('signinBtn').onclick = () => login();
           document.getElementById('signupBtn').onclick = () => signup();
         }
-      } catch (err) {
-        console.error('Auth init failed:', err);
-        alert('Authentication system failed to load. Check console.');
+      } catch (e) {
+        console.error('Auth init error:', e);
+        alert('Authentication failed – check console.');
       }
     });
 
-    // Optional: Separate signup flow (same as login but with prompt)
     function signup() {
       login({ authorizationParams: { screen_hint: 'signup' } });
     }
   </script>
-
 </body>
 </html>
