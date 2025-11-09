@@ -6,16 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     
-    <!-- FIX: Inserted the missing Auth0 SDK library CDN link -->
     <script src="https://cdn.auth0.com/js/auth0-spa-js/2.1/auth0-spa-js.production.js"></script>
-    
-    <!-- IMPORTANT FIX: Updated path to point to the 'js' folder -->
     <script src="./js/auth.js"></script>
 
     <style>
-        /* -------------------------------------------------
-           CUSTOM & GLOBAL STYLES (Based on user-provided CSS)
-        ------------------------------------------------- */
         :root {
             --primary-color: #3498db;
             --secondary-color: #2c3e50;
@@ -23,12 +17,11 @@
             --card-color: #fff;
         }
         
-        /* GLOBAL RESET & TYPOGRAPHY - MATCHED */
         *{margin:0;padding:0;box-sizing:border-box}
         html{font-size:16px}
         body{
             min-height:100vh;
-            font-family:'Inter', Arial, sans-serif; /* Using Inter font for better typography */
+            font-family:'Inter', Arial, sans-serif;
             background:var(--background-color);
             color:#333;
             line-height:1.6;
@@ -36,7 +29,7 @@
             flex-direction:column;
         }
         
-        /* HEADER */
+        /* HEADER - IMPROVED SPACING */
         .dashboard-header {
             background: var(--card-color);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -51,6 +44,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 2rem; /* Added gap for better spacing */
         }
         
         .logo-text {
@@ -58,12 +52,14 @@
             font-weight: 700;
             color: var(--primary-color);
             letter-spacing: -0.5px;
+            flex-shrink: 0; /* Prevent logo from shrinking */
         }
         
         .user-info {
             display: flex;
             align-items: center;
             gap: 1rem;
+            margin-left: auto; /* Push to the right */
         }
         
         .user-profile {
@@ -107,8 +103,189 @@
             margin: 0 auto;
             padding-bottom: 3rem;
         }
+
+        /* QUICK LINKS SECTION */
+        .quick-links {
+            background: var(--card-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .quick-links h2 {
+            font-size: 1.25rem;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .quick-links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .quick-link-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: var(--background-color);
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--secondary-color);
+            font-weight: 500;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .quick-link-item:hover {
+            background: #e8f4fd;
+            border-color: var(--primary-color);
+            transform: translateX(4px);
+        }
+
+        .quick-link-icon {
+            width: 20px;
+            height: 20px;
+            color: var(--primary-color);
+            flex-shrink: 0;
+        }
+
+        .add-link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.75rem 1.25rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 1rem;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .add-link-btn:hover {
+            background: #2980b9;
+            transform: translateY(-1px);
+        }
+
+        /* MODAL STYLES */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card-color);
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h3 {
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Inter', Arial, sans-serif;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: var(--secondary-color);
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .delete-link {
+            color: #e74c3c;
+            cursor: pointer;
+            font-size: 0.875rem;
+            margin-left: auto;
+            padding: 0.25rem 0.5rem;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .quick-link-item:hover .delete-link {
+            opacity: 1;
+        }
+
+        .delete-link:hover {
+            text-decoration: underline;
+        }
         
-        /* SOLUTIONS GRID (shared) - MATCHED */
+        /* SOLUTIONS GRID */
         .solutions h2{
             text-align:center;
             font-size:2rem;
@@ -132,7 +309,7 @@
             text-decoration: none;
             display: flex;
             flex-direction: column;
-            min-height: 350px; /* Ensure cards have similar height */
+            min-height: 350px;
         }
         .card:hover{
             transform:translateY(-6px);
@@ -140,7 +317,7 @@
         }
         .card img{
             width:100%;
-            height:140px; /* Adjusted height for better card ratio */
+            height:140px;
             object-fit:cover;
         }
         .card-body{
@@ -172,7 +349,6 @@
             text-transform: uppercase;
         }
         
-        /* FOOTER - MATCHED */
         footer{
             background:var(--secondary-color);
             color:#ddd;
@@ -182,7 +358,6 @@
             margin-top:auto;
         }
 
-        /* LOADING STATE */
         #loading {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -220,92 +395,198 @@
 
     <header class="dashboard-header" style="display: none;">
         <div class="header-content">
-            <span class="logo-text">Genexis Cloud  </span>
+            <span class="logo-text">Genexis Cloud</span>
             <div class="user-info">
-                <div class="user-profile" id="userProfile">
-                    <!-- User info will be injected here by JS -->
-                </div>
-                <!-- Call the logout function from your auth.js -->
+                <div class="user-profile" id="userProfile"></div>
                 <button class="logout-btn" onclick="logout()">Logout</button>
             </div>
         </div>
     </header>
 
     <main style="display: none;">
-        <div class="main-container solutions">
-            <h2>Your Tools</h2>
-            <div class="grid">
+        <div class="main-container">
+            
+            <!-- QUICK LINKS SECTION -->
+            <div class="quick-links">
+                <h2>Quick Links</h2>
+                <div class="quick-links-grid" id="quickLinksGrid">
+                    <!-- Quick links will be dynamically added here -->
+                </div>
+                <button class="add-link-btn" onclick="openAddLinkModal()">
+                    <svg class="quick-link-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Add Quick Link
+                </button>
+            </div>
 
-                <!-- Solution Card 1: Genomic Prediction -->
-                <a href="#" class="card">
-                    <img src="https://placehold.co/600x400/3498db/ffffff?text=Genomic+Prediction" alt="Genomic Selection Tool">
-                    <div class="card-body">
-                        <h3>Genomic Prediction Model</h3>
-                        <p>Predict phenotypic outcomes and breeding values for complex traits using integrated marker data and machine learning algorithms.</p>
-                        <span class="badge">Model Beta</span>
-                    </div>
-                </a>
-                
-                <!-- Solution Card 2: Trial Management -->
-                <a href="#" class="card">
-                    <img src="https://placehold.co/600x400/2ecc71/ffffff?text=Trial+Manager" alt="Field Trial Management">
-                    <div class="card-body">
-                        <h3>Field Trial Management</h3>
-                        <p>Design, manage, and analyze multi-location trials. Includes integrated GIS mapping and weather data tracking for real-time adjustments.</p>
-                        <span class="badge">Core Tool</span>
-                    </div>
-                </a>
+            <!-- TOOLS SECTION -->
+            <div class="solutions">
+                <h2>Your Tools</h2>
+                <div class="grid">
+                    <a href="#" class="card">
+                        <img src="https://placehold.co/600x400/3498db/ffffff?text=Genomic+Prediction" alt="Genomic Selection Tool">
+                        <div class="card-body">
+                            <h3>Genomic Prediction Model</h3>
+                            <p>Predict phenotypic outcomes and breeding values for complex traits using integrated marker data and machine learning algorithms.</p>
+                            <span class="badge">Model Beta</span>
+                        </div>
+                    </a>
+                    
+                    <a href="#" class="card">
+                        <img src="https://placehold.co/600x400/2ecc71/ffffff?text=Trial+Manager" alt="Field Trial Management">
+                        <div class="card-body">
+                            <h3>Field Trial Management</h3>
+                            <p>Design, manage, and analyze multi-location trials. Includes integrated GIS mapping and weather data tracking for real-time adjustments.</p>
+                            <span class="badge">Core Tool</span>
+                        </div>
+                    </a>
 
-                <!-- Solution Card 3: Advanced Crossing -->
-                <a href="#" class="card">
-                    <img src="https://placehold.co/600x400/f1c40f/333333?text=Crossing+Planner" alt="Crossing Planner">
-                    <div class="card-body">
-                        <h3>Advanced Crossing Planner</h3>
-                        <p>Optimize crossing block design based on genetic diversity metrics and target population improvement criteria (TPIC).</p>
-                        <span class="badge">Experimental</span>
-                    </div>
-                </a>
-
+                    <a href="#" class="card">
+                        <img src="https://placehold.co/600x400/f1c40f/333333?text=Crossing+Planner" alt="Crossing Planner">
+                        <div class="card-body">
+                            <h3>Advanced Crossing Planner</h3>
+                            <p>Optimize crossing block design based on genetic diversity metrics and target population improvement criteria (TPIC).</p>
+                            <span class="badge">Experimental</span>
+                        </div>
+                    </a>
+                </div>
             </div>
         </div>
     </main>
+
+    <!-- ADD LINK MODAL -->
+    <div id="addLinkModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Quick Link</h3>
+            </div>
+            <div class="form-group">
+                <label for="linkName">Link Name</label>
+                <input type="text" id="linkName" placeholder="e.g., Data Analysis Tool">
+            </div>
+            <div class="form-group">
+                <label for="linkUrl">URL</label>
+                <input type="url" id="linkUrl" placeholder="https://example.com">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeAddLinkModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveQuickLink()">Save Link</button>
+            </div>
+        </div>
+    </div>
 
     <footer>
         &copy; 2025 Genexis Cloud. All rights reserved.
     </footer>
 
     <script>
-        // Placeholder image for when a user has no profile picture
         const DEFAULT_PROFILE_PIC = 'https://placehold.co/40x40/95a5a6/ffffff?text=U';
 
-        // --- RE-LOCATED UTILITY FUNCTION ---
-        // Moved here from auth.js to ensure it's defined BEFORE use in loadDashboard
-        function getRedirectUriPath(pageName) {
-            // 1. Get the path, e.g., /plant-breeding-tools/index.html
-            const pathname = window.location.pathname;
+        // Quick Links Management
+        let quickLinks = [];
+
+        function loadQuickLinks() {
+            const saved = localStorage.getItem('genexisQuickLinks');
+            if (saved) {
+                quickLinks = JSON.parse(saved);
+            } else {
+                // Default links
+                quickLinks = [
+                    { name: 'Example Report', url: 'https://example.com/report' },
+                    { name: 'Data Portal', url: 'https://example.com/data' }
+                ];
+            }
+            renderQuickLinks();
+        }
+
+        function saveQuickLinksToStorage() {
+            localStorage.setItem('genexisQuickLinks', JSON.stringify(quickLinks));
+        }
+
+        function renderQuickLinks() {
+            const grid = document.getElementById('quickLinksGrid');
+            if (quickLinks.length === 0) {
+                grid.innerHTML = '<p style="color: #999; grid-column: 1/-1;">No quick links yet. Click "Add Quick Link" to get started.</p>';
+                return;
+            }
+
+            grid.innerHTML = quickLinks.map((link, index) => `
+                <a href="${link.url}" class="quick-link-item" target="_blank" rel="noopener noreferrer">
+                    <svg class="quick-link-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                    </svg>
+                    <span>${link.name}</span>
+                    <span class="delete-link" onclick="deleteQuickLink(event, ${index})">Delete</span>
+                </a>
+            `).join('');
+        }
+
+        function openAddLinkModal() {
+            document.getElementById('addLinkModal').classList.add('active');
+            document.getElementById('linkName').value = '';
+            document.getElementById('linkUrl').value = '';
+        }
+
+        function closeAddLinkModal() {
+            document.getElementById('addLinkModal').classList.remove('active');
+        }
+
+        function saveQuickLink() {
+            const name = document.getElementById('linkName').value.trim();
+            const url = document.getElementById('linkUrl').value.trim();
+
+            if (!name || !url) {
+                alert('Please fill in both fields');
+                return;
+            }
+
+            // Basic URL validation
+            try {
+                new URL(url);
+            } catch (e) {
+                alert('Please enter a valid URL (including http:// or https://)');
+                return;
+            }
+
+            quickLinks.push({ name, url });
+            saveQuickLinksToStorage();
+            renderQuickLinks();
+            closeAddLinkModal();
+        }
+
+        function deleteQuickLink(event, index) {
+            event.preventDefault();
+            event.stopPropagation();
             
-            // 2. Safely extract the root directory.
+            if (confirm('Are you sure you want to delete this quick link?')) {
+                quickLinks.splice(index, 1);
+                saveQuickLinksToStorage();
+                renderQuickLinks();
+            }
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('addLinkModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeAddLinkModal();
+            }
+        });
+
+        function getRedirectUriPath(pageName) {
+            const pathname = window.location.pathname;
             const pathSegments = pathname.split('/').filter(s => s.length > 0);
             
             if (pathSegments.length >= 1 && pathSegments[0] !== pageName && pathSegments[0] !== 'dashboard.html') {
-                // Assume the first segment is the subdirectory (e.g., 'plant-breeding-tools')
                 const subdirectory = pathSegments[0];
                 return '/' + subdirectory + '/' + pageName;
             }
             
-            // Fallback for root hosting or unusual environments
             return '/' + pageName;
         }
-        // -----------------------------------
         
-        /**
-         * Renders the user's profile information to the dashboard header.
-         * @param {Object} user - The user object returned by Auth0.
-         */
         function renderUserProfile(user) {
             const profileDiv = document.getElementById('userProfile');
-            
-            // Fallback for user name/picture if data is missing
             const name = user.name || user.nickname || 'User';
             const picture = user.picture || DEFAULT_PROFILE_PIC;
 
@@ -314,49 +595,37 @@
                 <span>Welcome, ${name.split(' ')[0]}</span>
             `;
             
-            // Add full user context as a tooltip
             profileDiv.title = `Signed in as: ${user.name || 'N/A'} (${user.email || 'No email'})`;
         }
 
-        /**
-         * Main function to load user and set up the dashboard.
-         */
         async function loadDashboard() {
             const loadingScreen = document.getElementById('loading');
             const header = document.querySelector('header');
             const main = document.querySelector('main');
             
             try {
-                // Check if the necessary Auth0 function is available
                 if (typeof initAuth0 === 'function' && typeof getUser === 'function' && typeof logout === 'function') {
-                    // Initialize the client and handle the redirect callback
                     await initAuth0();
                 } else {
-                    console.error("Auth0 functions (initAuth0, getUser, logout) are missing. Check if auth.js loaded correctly.");
+                    console.error("Auth0 functions are missing.");
                     throw new Error("Missing Authentication Service.");
                 }
 
-                // Get the user profile
                 const user = await getUser();
 
                 if (user) {
                     renderUserProfile(user);
-                    
-                    // Show header and main content
+                    loadQuickLinks(); // Load quick links after authentication
                     header.style.display = 'flex'; 
                     main.style.display = 'block'; 
                 } else {
-                    // If no user, redirect back to login (index.html is assumed)
                     console.warn("User not authenticated, redirecting to login.");
-                    // getRedirectUriPath is now guaranteed to be defined here
                     window.location.replace(window.location.origin + getRedirectUriPath('index.html')); 
                     return; 
                 }
 
             } catch (e) {
-                console.error('Error during dashboard load or Auth0 process:', e);
-                // Display error message
-                // getRedirectUriPath is now guaranteed to be defined here
+                console.error('Error during dashboard load:', e);
                 loadingScreen.innerHTML = `
                     <p style="color: #c0392b; margin-bottom: 1rem;">Authentication Failed: ${e.message}</p>
                     <button class="logout-btn" onclick="logout()">Try Logging Out</button>
@@ -364,12 +633,10 @@
                 `;
                 return;
             } finally {
-                // Hide loading screen
                 loadingScreen.style.display = 'none';
             }
         }
 
-        // Initialize the dashboard once the DOM is ready
         window.addEventListener('DOMContentLoaded', loadDashboard);
     </script>
 </body>
