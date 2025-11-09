@@ -1,7 +1,14 @@
+/* -------------------------------------------------
+   AUTH0 GLOBAL VARIABLES
+------------------------------------------------- */
 let auth0Client = null;
 
+/* -------------------------------------------------
+   INITIALIZE AUTH0
+------------------------------------------------- */
 async function initAuth0() {
   const redirectUri = window.location.origin + '/dashboard.html';
+
   const config = {
     domain: 'dev-hctfmbntodg4ekwd.us.auth0.com',
     clientId: 'v6yhw1p536sLDxH95gaT8DWd9KJ4nj6k',
@@ -9,10 +16,14 @@ async function initAuth0() {
     cacheLocation: 'localstorage',
     useRefreshTokens: true
   };
+
   auth0Client = await auth0.createAuth0Client(config);
   await handleRedirectCallback();
 }
 
+/* -------------------------------------------------
+   HANDLE REDIRECT CALLBACK
+------------------------------------------------- */
 async function handleRedirectCallback() {
   const query = window.location.search;
   if (query.includes('code=') && query.includes('state=')) {
@@ -21,18 +32,27 @@ async function handleRedirectCallback() {
   }
 }
 
-async function login(extra = {}) {
+/* -------------------------------------------------
+   LOGIN / SIGNUP
+------------------------------------------------- */
+async function login(extraParams = {}) {
   const redirectUri = window.location.origin + '/dashboard.html';
   await auth0Client.loginWithRedirect({
-    authorizationParams: { redirect_uri, ...extra.authorizationParams }
+    authorizationParams: { redirect_uri, ...extraParams.authorizationParams }
   });
 }
 
+/* -------------------------------------------------
+   LOGOUT
+------------------------------------------------- */
 async function logout() {
   const returnTo = window.location.origin + '/index.html';
   await auth0Client.logout({ logoutParams: { returnTo } });
 }
 
+/* -------------------------------------------------
+   GET CURRENT USER (for dashboard)
+------------------------------------------------- */
 async function getUser() {
   return await auth0Client.getUser();
 }
