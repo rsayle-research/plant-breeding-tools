@@ -12,10 +12,7 @@ async function initAuth0() {
   const config = {
     domain: 'dev-hctfmbntodg4ekwd.us.auth0.com',
     clientId: 'v6yhw1p536sLDxH95gaT8DWd9KJ4nj6k',
-    authorizationParams: { 
-  redirect_uri: redirectUri, 
-  ...(extraParams.authorizationParams || {})
-}
+    authorizationParams: { redirect_uri: redirectUri },
     cacheLocation: 'localstorage',
     useRefreshTokens: true
   };
@@ -41,7 +38,10 @@ async function handleRedirectCallback() {
 async function login(extraParams = {}) {
   const redirectUri = window.location.origin + '/dashboard.html';
   await auth0Client.loginWithRedirect({
-    authorizationParams: { redirect_uri, ...extraParams.authorizationParams }
+    authorizationParams: { 
+      redirect_uri: redirectUri, 
+      ...(extraParams.authorizationParams || {})
+    }
   });
 }
 
