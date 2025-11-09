@@ -1,21 +1,23 @@
 // Define auth0Client globally
 let auth0Client = null;
 
-// --- CRITICAL FIX: Define the base path correctly ---
-// This function determines the correct path regardless of where the file is hosted
+// --- CRITICAL FIX: Robust Path Determination for GitHub Pages ---
 function getRedirectUriPath(pageName) {
-    // window.location.pathname will be something like: /plant-breeding-tools/index.html
-    const pathSegments = window.location.pathname.split('/').filter(s => s.length > 0);
-
-    // If the path has more than one segment, assume the last segment is the file name
-    // and the second-to-last segment is the subdirectory (e.g., 'plant-breeding-tools').
-    if (pathSegments.length > 1) {
-        // Construct the full path: /subdirectory/pageName
+    // 1. Get the path, e.g., /plant-breeding-tools/index.html
+    const pathname = window.location.pathname;
+    
+    // 2. Safely extract the root directory.
+    // If running at the root, pathSegments[1] will be the file name.
+    // If running in a subdirectory (like GitHub Pages), pathSegments[1] will be the repo name.
+    const pathSegments = pathname.split('/').filter(s => s.length > 0);
+    
+    if (pathSegments.length >= 1 && pathSegments[0] !== pageName) {
+        // Assume the first segment is the subdirectory (e.g., 'plant-breeding-tools')
         const subdirectory = pathSegments[0];
         return '/' + subdirectory + '/' + pageName;
     }
     
-    // If hosted at the root (e.g., mysite.com/index.html), use just /pageName
+    // Fallback for root hosting or unusual environments
     return '/' + pageName;
 }
 // --------------------------------------------------------------------
