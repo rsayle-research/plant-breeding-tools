@@ -12,7 +12,10 @@ async function initAuth0() {
   const config = {
     domain: 'dev-hctfmbntodg4ekwd.us.auth0.com',
     clientId: 'v6yhw1p536sLDxH95gaT8DWd9KJ4nj6k',
-    authorizationParams: { redirect_uri: redirectUri },
+    authorizationParams: { 
+  redirect_uri: redirectUri, 
+  ...(extraParams.authorizationParams || {})
+}
     cacheLocation: 'localstorage',
     useRefreshTokens: true
   };
