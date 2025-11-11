@@ -607,7 +607,7 @@
             margin-top:auto;
         }
 
-        #loading {
+        #ing {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(255, 255, 255, 0.9);
@@ -647,9 +647,9 @@
 </head>
 <body>
 
-    <div id="loading">
+    <div id="ing">
         <div class="spinner"></div>
-        Authenticating and loading dashboard...
+        Authenticating and ing dashboard...
     </div>
 
     <header class="dashboard-header" style="display: none;">
@@ -861,90 +861,125 @@
             });
         }
 
-        // ========== QUICK LINKS FUNCTIONS ==========
-        async function loadQuickLinks() {
-            try {
-                await waitForFirebase();
-                
-                if (!window.firebaseDB) {
-                    throw new Error('Firebase not initialized');
-                }
+// ========== QUICK LINKS FUNCTIONS ==========
 
-                const { doc, getDoc } = window.firebaseModules;
-                const db = window.firebaseDB;
-
-                const docRef = doc(db, 'users', userEmail, 'settings', 'quicklinks');
-                await setDoc(docRef, {
-                    links: quickLinks,
-                    updatedAt: serverTimestamp()
-                });
-                console.log('Quick links saved to Firebase successfully');
-            } catch (error) {
-                console.error('Failed to save quick links to Firebase:', error);
-                alert('Failed to save quick links. Please check your connection and try again.');
-            }
+// 1. Loading function: reads data from Firebase
+async function fetchQuickLinks() { 
+    try {
+        await waitForFirebase();
+        
+        if (!window.firebaseDB) {
+            throw new Error('Firebase not initialized');
         }
 
-        function renderQuickLinks() {
-            const grid = document.getElementById('quickLinksGrid');
-            if (quickLinks.length === 0) {
-                grid.innerHTML = '<p style="color: #999; grid-column: 1/-1;">No quick links yet. Click "Add Quick Link" to get started.</p>';
-                return;
-            }
+        const { doc, getDoc } = window.firebaseModules;
+        const db = window.firebaseDB;
 
-            grid.innerHTML = quickLinks.map((link, index) => `
-                <a href="${link.url}" class="quick-link-item" target="_blank" rel="noopener noreferrer">
-                    <svg class="quick-link-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
-                    </svg>
-                    <span>${link.name}</span>
-                    <span class="delete-link" onclick="deleteQuickLink(event, ${index})">Delete</span>
-                </a>
-            `).join('');
+        const docRef = doc(db, 'users', userEmail, 'settings', 'quicklinks');
+        const docSnap = await getDoc(docRef); 
+        
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            quickLinks = data.links || [];
+            console.log('Quick links loaded from Firebase:', quickLinks.length, 'links');
+        } else {
+            console.log('No existing quick links, using empty array');
+            quickLinks = []; 
+        }
+    } catch (error) {
+        console.error('Failed to load quick links from Firebase:', error);
+        quickLinks = []; 
+    }
+    // Render after loading (or failing to load)
+    renderQuickLinks();
+}
+
+// 2. Saving function: writes data to Firebase
+async function saveQuickLinksToFirebase() {
+    try {
+        await waitForFirebase();
+        
+        if (!window.firebaseDB) {
+            throw new Error('Firebase not initialized');
         }
 
-        function openAddLinkModal() {
-            document.getElementById('addLinkModal').classList.add('active');
-            document.getElementById('linkName').value = '';
-            document.getElementById('linkUrl').value = '';
-        }
+        const { doc, setDoc, serverTimestamp } = window.firebaseModules; 
+        const db = window.firebaseDB;
 
-        function closeAddLinkModal() {
-            document.getElementById('addLinkModal').classList.remove('active');
-        }
+        const docRef = doc(db, 'users', userEmail, 'settings', 'quicklinks');
+        await setDoc(docRef, { 
+            links: quickLinks,
+            updatedAt: serverTimestamp()
+        });
+        console.log('Quick links saved to Firebase successfully');
+    } catch (error) {
+        console.error('Failed to save quick links to Firebase:', error);
+        alert('Failed to save quick links. Please check your connection and try again.');
+    }
+}
 
-        function saveQuickLink() {
-            const name = document.getElementById('linkName').value.trim();
-            const url = document.getElementById('linkUrl').value.trim();
+function renderQuickLinks() {
+    const grid = document.getElementById('quickLinksGrid');
+    if (quickLinks.length === 0) {
+        grid.innerHTML = '<p style="color: #999; grid-column: 1/-1;">No quick links yet. Click "Add Quick Link" to get started.</p>';
+        return;
+    }
 
-            if (!name || !url) {
-                alert('Please fill in both fields');
-                return;
-            }
+    grid.innerHTML = quickLinks.map((link, index) => `
+        <a href="${link.url}" class="quick-link-item" target="_blank" rel="noopener noreferrer">
+            <svg class="quick-link-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+            </svg>
+            <span>${link.name}</span>
+            <span class="delete-link" onclick="deleteQuickLink(event, ${index})">Delete</span>
+        </a>
+    `).join('');
+}
 
-            try {
-                new URL(url);
-            } catch (e) {
-                alert('Please enter a valid URL (including http:// or https://)');
-                return;
-            }
+function openAddLinkModal() {
+    document.getElementById('addLinkModal').classList.add('active');
+    document.getElementById('linkName').value = '';
+    document.getElementById('linkUrl').value = '';
+}
 
-            quickLinks.push({ name, url });
-            saveQuickLinksToStorage();
-            renderQuickLinks();
-            closeAddLinkModal();
-        }
+function closeAddLinkModal() {
+    document.getElementById('addLinkModal').classList.remove('active');
+}
 
-        function deleteQuickLink(event, index) {
-            event.preventDefault();
-            event.stopPropagation();
-            
-            if (confirm('Are you sure you want to delete this quick link?')) {
-                quickLinks.splice(index, 1);
-                saveQuickLinksToStorage();
-                renderQuickLinks();
-            }
-        }
+function saveQuickLink() {
+    const name = document.getElementById('linkName').value.trim();
+    const url = document.getElementById('linkUrl').value.trim();
+
+    if (!name || !url) {
+        alert('Please fill in both fields');
+        return;
+    }
+
+    try {
+        new URL(url);
+    } catch (e) {
+        alert('Please enter a valid URL (including http:// or https://)');
+        return;
+    }
+
+    quickLinks.push({ name, url });
+    // ***FIX: Call the defined Firebase saving function***
+    saveQuickLinksToFirebase(); 
+    renderQuickLinks();
+    closeAddLinkModal();
+}
+
+function deleteQuickLink(event, index) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    if (confirm('Are you sure you want to delete this quick link?')) {
+        quickLinks.splice(index, 1);
+        // ***FIX: Call the defined Firebase saving function***
+        saveQuickLinksToFirebase(); 
+        renderQuickLinks();
+    }
+}
 
         // ========== TO-DO LISTS FUNCTIONS ==========
         async function loadTodoLists() {
@@ -1429,7 +1464,7 @@
                     userEmail = user.email || user.sub;
                     
                     renderUserProfile(user);
-                    await loadQuickLinks();
+                    await fetchQuickLinks(); // ***UPDATED CALL***
                     await loadTodoLists();
                     header.style.display = 'flex'; 
                     main.style.display = 'block'; 
